@@ -70,23 +70,23 @@ void main() {
               step = 2;
               break;
             case 2:
-              if(strcmp(str, "+")==0) {
+              if(strcmp(str, "+\n")==0) {
                 op = '+';
                 strcpy(str, "\n請輸入第二個數字: ");
               }
-              else if(strcmp(str, "-")==0) {
+              else if(strcmp(str, "-\n")==0) {
                 op = '-';
                 strcpy(str, "\n請輸入第二個數字: ");
               }
-              else if(strcmp(str, "*")==0) {
+              else if(strcmp(str, "*\n")==0) {
                 op = '*';
                 strcpy(str, "\n請輸入乘數: ");
               }
-              else if(strcmp(str, "/")==0) {
+              else if(strcmp(str, "/\n")==0) {
                 op = '/';
                 strcpy(str, "\n請輸入分母: ");
               }
-              else if(strcmp(str, "^")==0) {
+              else if(strcmp(str, "^\n")==0) {
                 op = '^';
                 strcpy(str, "\n請輸入次方數: ");
               }
@@ -124,11 +124,11 @@ void main() {
               step = 4;
               break;
             case 4:
-              if(strcmp(str, "c")==0) {
+              if(strcmp(str, "c\n")==0) {
                 strcpy(str, "\n開始進行，任意二數的四則運算。\n請輸入第一個數字。");
                 ans = 0;
                 step = 1;
-              }else if(strcmp(str, "q")==0) {
+              }else if(strcmp(str, "q\n")==0) {
                 strcpy(str, "\n離開\n回到一般模式");
                 ans = 0;
                 calc = 0;
@@ -142,14 +142,14 @@ void main() {
               break;
           }
         }else {
-          if(strcmp(str, "How are you?")==0) {        //比對;0:完全相符 
+          if(strcmp(str, "How are you?\n")==0) {        //比對;0:完全相符 
             strcpy(str, "Fine, thank you.");
-          }else if(strcmp(str, "calc")==0){
+          }else if(strcmp(str, "calc\n")==0){
             strcpy(str, "\nOK!\n開始進行任意二數的四則運算。\n請輸入第一個數字。");
             calc = 1;
             step = 1;
           }else {
-            strcpy(str, "What's up?\n(輸入\"calc\" 進入簡易計算機模式)");
+            strcpy(str, "What's up?(輸入\"calc\" 進入簡易計算機模式)");
           }
         }
         /********************************************/
