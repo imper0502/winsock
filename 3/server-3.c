@@ -60,38 +60,38 @@ void main() {
           break;
         }
         str[n] = '\0';
-        printf("Server <<< %s\n", str);
+        printf("Server <<< %s", str);
         /**簡易計算機&字串處理***********************/
         if(calc) {
           switch (step) {
             case 1:
               x = atof(str);
-              strcpy(str, "\n直接輸入運算符號(+, -, *, /, ^): ");
+              strcpy(str, "\n直接輸入運算符號(+, -, *, /, ^): \n");
               step = 2;
               break;
             case 2:
               if(strcmp(str, "+\n")==0) {
                 op = '+';
-                strcpy(str, "\n請輸入第二個數字: ");
+                strcpy(str, "\n請輸入第二個數字: \n");
               }
               else if(strcmp(str, "-\n")==0) {
                 op = '-';
-                strcpy(str, "\n請輸入第二個數字: ");
+                strcpy(str, "\n請輸入第二個數字: \n");
               }
               else if(strcmp(str, "*\n")==0) {
                 op = '*';
-                strcpy(str, "\n請輸入乘數: ");
+                strcpy(str, "\n請輸入乘數: \n");
               }
               else if(strcmp(str, "/\n")==0) {
                 op = '/';
-                strcpy(str, "\n請輸入分母: ");
+                strcpy(str, "\n請輸入分母: \n");
               }
               else if(strcmp(str, "^\n")==0) {
                 op = '^';
-                strcpy(str, "\n請輸入次方數: ");
+                strcpy(str, "\n請輸入次方數: \n");
               }
               else {
-                strcpy(str, "\n輸入錯誤!\n重新輸入運算符號(+, -, *, /, ^): ");
+                strcpy(str, "\n輸入錯誤!\n重新輸入運算符號(+, -, *, /, ^): \n");
                 break;
               }
               step = 3;
@@ -120,16 +120,16 @@ void main() {
               sprintf(tmp, "%f", ans);
               strcpy(str, "\nAns= ");
               strcat(str, tmp);
-              strcat(str, "\n要繼續運算輸入\"c\".\n要離開輸入\"q\".");
+              strcat(str, "\n要繼續運算輸入\"c\".\n要離開輸入\"q\".\n");
               step = 4;
               break;
             case 4:
               if(strcmp(str, "c\n")==0) {
-                strcpy(str, "\n開始進行，任意二數的四則運算。\n請輸入第一個數字。");
+                strcpy(str, "\n開始進行，任意二數的四則運算。\n請輸入第一個數字。\n");
                 ans = 0;
                 step = 1;
               }else if(strcmp(str, "q\n")==0) {
-                strcpy(str, "\n離開\n回到一般模式");
+                strcpy(str, "\n離開\n回到一般模式\n");
                 ans = 0;
                 calc = 0;
                 step = 0;
@@ -137,7 +137,7 @@ void main() {
                 sprintf(tmp, "%f", ans);
                 strcpy(str, "\nAns= ");
                 strcat(str, tmp);
-                strcat(str, "\n要繼續運算輸入\"c\".\n要離開輸入\"q\".");
+                strcat(str, "\n要繼續運算輸入\"c\".\n要離開輸入\"q\".\n");
               }
               break;
           }
@@ -145,11 +145,11 @@ void main() {
           if(strcmp(str, "How are you?\n")==0) {        //比對;0:完全相符 
             strcpy(str, "Fine, thank you.");
           }else if(strcmp(str, "calc\n")==0){
-            strcpy(str, "\nOK!\n開始進行任意二數的四則運算。\n請輸入第一個數字。");
+            strcpy(str, "\nOK!\n開始進行任意二數的四則運算。\n請輸入第一個數字。\n");
             calc = 1;
             step = 1;
           }else {
-            strcpy(str, "What's up?(輸入\"calc\" 進入簡易計算機模式)");
+            strcpy(str, "What's up?(輸入\"calc\" 進入簡易計算機模式)\n");
           }
         }
         /********************************************/
@@ -157,7 +157,7 @@ void main() {
           fprintf(stderr, "echo_srv: Connection closed.\n");
           break;
         }
-        printf("Server >>> %s\n", str);
+        printf("Server >>> %s", str);
       }
     }
   }

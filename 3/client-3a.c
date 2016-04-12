@@ -1,4 +1,4 @@
-/* client*/
+/* client-a*/
 
 #include <stdio.h> 
 #include <string.h>
@@ -20,10 +20,10 @@ void main() {
     fprintf(stderr, "echo_cli: WSAStartup() fails!!!\n");
     exit(1);
   }
-  /*
+  
   printf("Echo server IP: ");
   fgets(str, MAXLINE, stdin);
-  */
+  
   serv.sin_family = AF_INET;
   serv.sin_addr.s_addr = inet_addr("127.0.0.1");
   serv.sin_port = htons(IPPORT_ECHO);
@@ -66,7 +66,7 @@ void main() {
       fprintf(stderr, "echo_cli: send() error!!!\n");
       break;
     }
-    printf("client >>> %s\n", str);
+    printf("client >>> %s", str);
     if((n=recv(sd, str,MAXLINE,0)) == 0) {
       fprintf(stderr, "echo_cli: Connection closed.\n");
       break;
@@ -75,7 +75,7 @@ void main() {
       break;
     }else {
       str[n] = '\0';
-      printf("client <<< %s\n", str);
+      printf("client <<< %s", str);
     }
   /**************************************************/
     printf("INPUT >> ");
