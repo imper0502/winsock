@@ -86,7 +86,7 @@ void main() {
           break;
         }
         // 如果有收到，補一個NULL，修正str結尾
-        if(str_a[n-1] != '\n') str[n++] = '\n';
+        //if(str_a[n-1] != '\n') str[n++] = '\n';
         str_a[n] = '\0';
         
         if((m = recv(cli_sd_b, str_b, MAXLINE, 0))==0) {
@@ -96,7 +96,7 @@ void main() {
           fprintf(stderr, "echo_srv: recv() error!!!\n");
           break;
         }             
-        if(str_b[m-1] != '\n') str[m++] = '\n';
+        //if(str_b[m-1] != '\n') str[m++] = '\n';
         str_b[m] = '\0';
         // show str
         printf("Server <<< cli-A: %s", str_a);
