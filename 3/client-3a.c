@@ -7,7 +7,7 @@
 #define MAXLINE 1024
 
 void main() {
-  /**«Å§i°Ï******************************************/
+  /**å®£å‘Šå€******************************************/
   WSADATA wsadata;
   SOCKET sd;
   struct sockaddr_in serv;
@@ -15,7 +15,7 @@ void main() {
   //u_short port = 4321;
   int n = 0;
   char str[MAXLINE];
-  /**ªì©l¤Æ°Ï****************************************/ 
+  /**åˆå§‹åŒ–å€****************************************/ 
   if(WSAStartup(0x101, (LPWSADATA)&wsadata) != 0) {
     fprintf(stderr, "echo_cli: WSAStartup() fails!!!\n");
     exit(1);
@@ -32,7 +32,7 @@ void main() {
     fprintf(stderr, "echo_cli: Can't open TCP socket.\n");
     exit(1);
   }
-  /**§ïport¥\¯à 
+  /**æ”¹portåŠŸèƒ½ 
   printf("INPUT PORT(default:4321) >> ");
   gets(str);
   if(strlen(str)!=0) {
@@ -40,7 +40,7 @@ void main() {
     if(port != (u_short)4321)serv.sin_port = htons(port);
   }
   
-  /**¤u§@°Ï*****************************************/ 
+  /**å·¥ä½œå€*****************************************/ 
   printf("Client: waiting for server...\n");
   if(connect(sd, (LPSOCKADDR)&serv, sizeof(serv))== SOCKET_ERROR) {
     fprintf(stderr, "echo_cli: Can't connect to echo server.\n");
@@ -54,23 +54,12 @@ void main() {
   send(sd, str, strlen(str), 0);
   printf("client >>> %s\n", str);
   
-  n=recv(sd, str, MAXLINE, 0);  //n = ¦r¦êªø«× 
+  n=recv(sd, str, MAXLINE, 0);  //n = å­—ä¸²é•·åº¦ 
   str[n] = '\0';
   printf("client-recv: %s\n", str);
   
   */
-  printf("INPUT >> ");
-  while( fgets(str, MAXLINE, stdin) != NULL) {
-    if(strcmp(str, "quit\n")==0||strcmp(str, "exit\n")==0) break;
-    if(send(sd, str, strlen(str), 0) == SOCKET_ERROR) {
-      fprintf(stderr, "echo_cli: send() error!!!\n");
-      break;
-    }
-    printf("client >>> %s", str);
-    if(strcmp(str, "over\n\0")==0) {
-      printf("INPUT >> ");
-      continue;
-    }
+  while(1) {
     if((n=recv(sd, str,MAXLINE,0)) == 0) {
       fprintf(stderr, "echo_cli: Connection closed.\n");
       break;
@@ -81,8 +70,18 @@ void main() {
       str[n] = '\0';
       printf("client <<< %s", str);
     }
-  /**************************************************/
     printf("INPUT >> ");
+    while( fgets(str, MAXLINE, stdin) != NULL) {
+      if(send(sd, str, strlen(str), 0) == SOCKET_ERROR) {
+        fprintf(stderr, "echo_cli: send() error!!!\n");
+        break;
+      }
+      printf("client >>> %s", str);
+      if(strcmp(str, "over\n\0")==0) {
+        break;
+      }
+      printf("INPUT >> ");
+    }
   }
   closesocket(sd);
   WSACleanup();
