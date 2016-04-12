@@ -67,6 +67,10 @@ void main() {
       break;
     }
     printf("client >>> %s", str);
+    if(strcmp(str, "over\n\0")==0) {
+      printf("INPUT >> ");
+      continue;
+    }
     if((n=recv(sd, str,MAXLINE,0)) == 0) {
       fprintf(stderr, "echo_cli: Connection closed.\n");
       break;
