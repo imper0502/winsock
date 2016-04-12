@@ -21,11 +21,11 @@ void main() {
     exit(1);
   }
   
-  printf("Echo server IP: ");
-  fgets(str, MAXLINE, stdin);
+  //printf("Echo server IP: ");
+  //fgets(str, MAXLINE, stdin);
   
   serv.sin_family = AF_INET;
-  serv.sin_addr.s_addr = inet_addr("127.0.0.1");
+  serv.sin_addr.s_addr = inet_addr("127.0.0.2");
   serv.sin_port = htons(IPPORT_ECHO);
   
   if((sd = socket(AF_INET, SOCK_STREAM, 0)) == SOCKET_ERROR) {

@@ -10,10 +10,10 @@ void main() {
   /**«Å§i°Ï**************************************/ 
   WSADATA wsadata;
   SOCKET serv_sd, cli_sd_a, cli_sd_b; 
-  struct sockaddr_in serv, cli;
+  struct sockaddr_in serv, cli_a, cli_b;
   
   boolean calc = 0;
-  int cli_len, n, step = 0;
+  int cli_len_a, cli_len_b, n, step = 0;
   double x = 0, y = 0, ans = 0; 
   char str[MAXLINE], tmp[MAXLINE], op;
   
@@ -53,15 +53,16 @@ void main() {
     exit(1);
   }
   
-  cli_len = sizeof(cli);
-  
+  cli_len_a = sizeof(cli_a);
+  cli_len_b = sizeof(cli_b);
   while(1) {
     printf("Server: waiting for client...\n");
-    if((cli_sd_a = accept(serv_sd, (LPSOCKADDR)&cli, &cli_len)) == SOCKET_ERROR) {
+    while(1) {
+    if((cli_sd_a = accept(serv_sd, (LPSOCKADDR)&cli_a, &cli_len_a)) == SOCKET_ERROR) {
       fprintf(stderr, "echo_srv: accept() error!!!\n");
       closesocket(cli_sd_a);
     }else {
-      while(1) {
+     
         if((n = recv(cli_sd_a, str, MAXLINE, 0))==0) {
           fprintf(stderr, "echo_srv: Connection closed.\n");
           break;
@@ -70,21 +71,23 @@ void main() {
           break;
         }
         str[n] = '\0';
-        printf("Server <<< %s", str);
+        printf("Server <<< cli-A: %s", str);
         strcpy(str, "What's up?\n");
         /********************************************/
         if(send(cli_sd_a, str, strlen(str), 0) == SOCKET_ERROR) {
           fprintf(stderr, "echo_srv: Connection closed.\n");
           break;
         }
-        printf("Server >>> %s", str);
+        printf("Server >>> cli-A: %s", str);
+        break;
       }
     }
-    if((cli_sd_b = accept(serv_sd, (LPSOCKADDR)&cli, &cli_len)) == SOCKET_ERROR) {
+    while(1) {
+    if((cli_sd_b = accept(serv_sd, (LPSOCKADDR)&cli_b, &cli_len_b)) == SOCKET_ERROR) {
       fprintf(stderr, "echo_srv: accept() error!!!\n");
       closesocket(cli_sd_b);
     }else {
-      while(1) {
+      
         if((n = recv(cli_sd_b, str, MAXLINE, 0))==0) {
           fprintf(stderr, "echo_srv: Connection closed.\n");
           break;
@@ -93,14 +96,15 @@ void main() {
           break;
         }
         str[n] = '\0';
-        printf("Server <<< %s", str);
+        printf("Server <<< cli-B: %s", str);
         strcpy(str, "What's up?\n");
         /********************************************/
         if(send(cli_sd_b, str, strlen(str), 0) == SOCKET_ERROR) {
           fprintf(stderr, "echo_srv: Connection closed.\n");
           break;
         }
-        printf("Server >>> %s", str);
+        printf("Server >>> cli-B: %s", str);
+        break;
       }
     }
   }
