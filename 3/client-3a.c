@@ -69,55 +69,60 @@ void main() {
   /**********************
   ** 工作區
   ***********************/
-
-  printf("Client: waiting for server...\n");
-  if(connect(sd, (LPSOCKADDR)&serv, sizeof(serv))== SOCKET_ERROR) {
-    fprintf(stderr, "\necho_cli: Can't connect to echo server.\n");
-    exit(1);
-  }
   while(1) {
-    if((n = recv(sd, str,MAXLINE,0)) == 0) {
-      fprintf(stderr, "\necho_cli: Connection closed.\n");
-      break;
-    }else if(n == SOCKET_ERROR) {
-      fprintf(stderr, "\necho_cli: recv() error!!!\n");
-      break;
-    }else {
-      str[n] = '\0';
-      printf(">>> client: %s\n", str);
+    printf("Client: waiting for server...\n");
+    if(connect(sd, (LPSOCKADDR)&serv, sizeof(serv))== SOCKET_ERROR) {
+      fprintf(stderr, "\necho_cli: Can't connect to echo server.\n");
+      exit(1);
     }
     while(1) {
-      printf("INPUT >> ");
-      while( fgets(str, MAXLINE, stdin) != NULL) {
-        //=======================================
-        // TO DO:
-
-        //=======================================
-        //發送
-        if(send(sd, str, strlen(str), 0) == SOCKET_ERROR) {
-          fprintf(stderr, "\necho_cli: send() error!!!\n");
-          break;
-        }
-        printf("<<< client: %s", str);
-        //接收
-        if((n = recv(sd, str,MAXLINE,0)) == 0) {
-          fprintf(stderr, "\necho_cli: Connection closed.\n");
-          break;
-        }else if(n == SOCKET_ERROR) {
-          fprintf(stderr, "\necho_cli: recv() error!!!\n");
-          break;
-        }else {
-          str[n] = '\0';
-          printf(">>> client: %s\n", str);
-        }
+      if((n = recv(sd, str,MAXLINE,0)) == 0) {
+        fprintf(stderr, "\necho_cli: Connection closed.\n");
         break;
+      }else if(n == SOCKET_ERROR) {
+        fprintf(stderr, "\necho_cli: recv() error!!!\n");
+        break;
+      }else {
+        str[n] = '\0';
+        printf(">>> client: %s\n", str);
       }
-      if(strcmp(str, "over")==0) {
-        printf("$ ");
-        break;
+      //=======================//
+      //模式判斷
+      //=======================//
+      while(strcmp( str, "Hello!")==0) {
+        printf("INPUT >> ");
+        while( fgets(str, MAXLINE, stdin) != NULL) {
+          //=======================================
+          // TO DO:
+
+          //=======================================
+          //發送
+          if(send(sd, str, strlen(str), 0) == SOCKET_ERROR) {
+            fprintf(stderr, "\necho_cli: send() error!!!\n");
+            break;
+          }
+          printf("<<< client: %s", str);
+          //接收
+          if((n = recv(sd, str,MAXLINE,0)) == 0) {
+            fprintf(stderr, "\necho_cli: Connection closed.\n");
+            break;
+          }else if(n == SOCKET_ERROR) {
+            fprintf(stderr, "\necho_cli: recv() error!!!\n");
+            break;
+          }else {
+            str[n] = '\0';
+            printf(">>> client: %s\n", str);
+          }
+          break;
+        }
+        if(strcmp(str, "over")==0) {
+          printf("$ ");
+          break;
+        }
+        strcpy(str, "Hello!");
       }
     }
+    closesocket(sd);
   }
-  closesocket(sd);
   WSACleanup();
 }

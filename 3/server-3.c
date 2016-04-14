@@ -64,12 +64,8 @@ void main() {
   cli_len_a = sizeof(cli_a);
   cli_len_b = sizeof(cli_b);
     
-  /*
-  ** 工作區
-  **/
-    
-  // 等accept() return
   while(1) {
+    // 等accept() return
     printf("Server: waiting for client-A...\n");
     if((cli_sd_a = accept(serv_sd, (LPSOCKADDR)&cli_a, &cli_len_a)) == SOCKET_ERROR) {
       fprintf(stderr, "\necho_srv: accept() error!!!\n");
@@ -78,27 +74,27 @@ void main() {
       printf("Server: client-A is online.\n");
       strcpy( str_a, "Hello!");
       if(send(cli_sd_a, str_a, strlen(str_a), 0) == SOCKET_ERROR) {
-          fprintf(stderr, "\necho_srv: Connection closed.\n");
-          break;
+        fprintf(stderr, "\necho_srv: Connection closed.\n");
+        break;
       }else {
         printf("Server >>> cli-A: %s\n", str_a);
       }
       printf("Server: waiting for client-B...\n");
       if((cli_sd_b = accept(serv_sd, (LPSOCKADDR)&cli_b, &cli_len_b)) == SOCKET_ERROR) {
-      fprintf(stderr, "\necho_srv: accept() error!!!\n");
-      closesocket(cli_sd_b);
+        fprintf(stderr, "\necho_srv: accept() error!!!\n");
+        closesocket(cli_sd_b);
       }else {
         printf("Server: client-B is online.\n");
         strcpy( str_b, "Hello!");
         if(send(cli_sd_b, str_b, strlen(str_b), 0) == SOCKET_ERROR) {
-            fprintf(stderr, "\necho_srv: Connection closed.\n");
-            break;
+          fprintf(stderr, "\necho_srv: Connection closed.\n");
+          break;
         }else {
           printf("Server >>> cli-B: %s\n", str_b);
         }
-      // accept() OK!
+        // accept() OK!
         while(1) {
-        // 接收
+          // 接收
           if((n = recv(cli_sd_a, str_a, MAXLINE, 0))==0) {
             fprintf(stderr, "\necho_srv: Connection closed.\n");
             break;
@@ -106,19 +102,19 @@ void main() {
             fprintf(stderr, "\necho_srv: recv() error!!!\n");
             break;
           }
-        // 如果有收到，修正str結尾，補一個NULL
-          str_a[n-1] = '\0';
-        // show str
+          // 如果有收到，修正str結尾，補一個NULL
+          if(n>1) str_a[n-1] = '\0';
+          // show str
           printf("Server <<< cli-A: %s\n\n", str_a);
-        /************************************/
-          
-        // TO DO HERE IN str
-          
-        /************************************/
-        // 傳送出去
+          /************************************/
+            
+          // TO DO:
+            
+          /************************************/
+          // 傳送出去
           if(send(cli_sd_a, str_a, strlen(str_a), 0) == SOCKET_ERROR) {
-              fprintf(stderr, "\necho_srv: Connection closed.\n");
-              break;
+            fprintf(stderr, "\necho_srv: Connection closed.\n");
+            break;
           }else if(send(cli_sd_b, str_a, strlen(str_a), 0) == SOCKET_ERROR) {
             fprintf(stderr, "\necho_srv: Connection closed.\n");
             break;
@@ -126,12 +122,19 @@ void main() {
             printf("Server >>> cli-A: %s\n", str_a);
             printf("Server >>> cli-B: %s\n", str_a);
           }
+          //============================
+          // 判斷是否跳出
+          //============================
+          if(strcmp(str_a, "over")==0){
+            break;
+          }
         }
+        closesocket(cli_sd_b);
       }
+      closesocket(cli_sd_a);
     }
   }
-  closesocket(cli_sd_a);
-  closesocket(cli_sd_b);
+  
   closesocket(serv_sd);
   WSACleanup();
 }
