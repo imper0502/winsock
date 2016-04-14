@@ -91,7 +91,7 @@ void main() {
       //=======================//
       while(strcmp( str, "Hello!")==0) {
         printf("INPUT >> ");
-        while( fgets(str, MAXLINE, stdin) != NULL) {
+        if( fgets(str, MAXLINE, stdin) != NULL) {// while
           //=======================================
           // TO DO:
 
@@ -113,7 +113,7 @@ void main() {
             str[n] = '\0';
             printf(">>> client: %s\n", str);
           }
-          break;
+          //break;
         }
         if(strcmp(str, "over")==0) {
           printf("$\n");
