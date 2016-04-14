@@ -11,7 +11,7 @@
 
 void main() {
   /*
-  ** å®£å‘Š
+  ** «Å§i
   **/ 
   WSADATA wsadata;
   SOCKET serv_sd, cli_sd_a, cli_sd_b; 
@@ -20,110 +20,114 @@ void main() {
   char str_a[MAXLINE], str_b[MAXLINE]; 
   
   /*
-  ** å‘¼å« WSAStrartup() è¨»å†Š WinSock DLL çš„ä½¿ç”¨
+  ** ©I¥s WSAStrartup() µù¥U WinSock DLL ªº¨Ï¥Î
   **/
   if(WSAStartup(0x101, (LPWSADATA)&wsadata) != 0) {
-    fprintf(stderr, "echo_srv: Can't use WinSock DLL.\n");
+    fprintf(stderr, "\necho_srv: Can't use WinSock DLL.\n");
     exit(1);
   }
   
   /*
-  ** é–‹å•Ÿ TCP socket
+  ** ¶}±Ò TCP socket
   **/
   if((serv_sd = socket(AF_INET, SOCK_STREAM, 0)) == SOCKET_ERROR) {
-    fprintf(stderr, "echo_srv: Can't open TCP socket.\n");
+    fprintf(stderr, "\necho_srv: Can't open TCP socket.\n");
     exit(1);
   }
   
   /*
-  ** æŒ‡å®šsocket çš„ IP & port
+  ** «ü©wsocket ªº IP & port
   **/
   serv.sin_family = AF_INET;
   serv.sin_addr.s_addr = 0;
   serv.sin_port = htons(IPPORT_ECHO);
   
   /*
-  ** å·¥ä½œå€
+  ** ¤u§@°Ï
   **/
+  
   if(bind(serv_sd, (LPSOCKADDR)&serv, sizeof(serv)) < 0) {
-    fprintf(stderr, "echo_srv: Can't bind local address.\n");
+    fprintf(stderr, "\necho_srv: Can't bind local address.\n");
     exit(1);
   }
   
   /*
-  ** å‘¼å« listen() ä½¿ socketé€²å…¥[ç›£è½]ç‹€æ…‹ï¼Œä¸¦è¨­å®š
-  ** æœ€å¤§åŒæ™‚å¯æ¥å—çš„é€£çµè¦æ±‚
+  ** ©I¥s listen() ¨Ï socket¶i¤J[ºÊÅ¥]ª¬ºA¡A¨Ã³]©w
+  ** ³Ì¤j¦P®É¥i±µ¨üªº³sµ²­n¨D
   **/
+  
   if( listen(serv_sd, 5) < 0) {
-    fprintf(stderr, "echo_srv: listen() error!!!\n");
+    fprintf(stderr, "\necho_srv: listen() error!!!\n");
     exit(1);
   }
   
   cli_len_a = sizeof(cli_a);
   cli_len_b = sizeof(cli_b);
-  
-  /*
-  ** å·¥ä½œå€
-  **/ 
-  while(1) {
-    // ç­‰accept() return
-    printf("Server: waiting for client...\n");
-    if((cli_sd_a = accept(serv_sd, (LPSOCKADDR)&cli_a, &cli_len_a)) == SOCKET_ERROR) {
-      fprintf(stderr, "echo_srv: accept() error!!!\n");
-      closesocket(cli_sd_a);
-    }
-    if((cli_sd_b = accept(serv_sd, (LPSOCKADDR)&cli_b, &cli_len_b)) == SOCKET_ERROR) {
-      fprintf(stderr, "echo_srv: accept() error!!!\n");
-      closesocket(cli_sd_b);
-    } 
-    // accept() OK!
-    while(1) {
-    // å…ˆæ¥æ”¶
-      if((n = recv(cli_sd_a, str_a, MAXLINE, 0))==0) {
-        fprintf(stderr, "echo_srv: Connection closed.\n");
-        break;
-      }else if (n == SOCKET_ERROR) {
-        fprintf(stderr, "echo_srv: recv() error!!!\n");
-        break;
-      }
-      // å¦‚æœæœ‰æ”¶åˆ°ï¼Œè£œä¸€å€‹NULLï¼Œä¿®æ­£strçµå°¾
-      //if(str_a[n-1] != '\n') str[n++] = '\n';
-      str_a[n] = '\0';
     
-      if((m = recv(cli_sd_b, str_b, MAXLINE, 0))==0) {
-        fprintf(stderr, "echo_srv: Connection closed.\n");
-        break;
-      }else if (m == SOCKET_ERROR) {
-        fprintf(stderr, "echo_srv: recv() error!!!\n");
-        break;
-      }             
-      //if(str_b[m-1] != '\n') str[m++] = '\n';
-      str_b[m] = '\0';
-      // show str
-      printf("Server <<< cli-A: %s", str_a);
-      printf("Server <<< cli-B: %s", str_b);
-      /************************************/
-      
-      // TO DO HERE IN str
-      
-      /************************************/
-      // å‚³é€å‡ºå»
-      if(send(cli_sd_a, str_b, strlen(str_b), 0) == SOCKET_ERROR) {
-          fprintf(stderr, "echo_srv: Connection closed.\n");
-          break;
-      }
-      printf("Server >>> cli-A: %s", str_b);
-          
-      // å‚³é€å‡ºå»
-      if(send(cli_sd_b, str_a, strlen(str_a), 0) == SOCKET_ERROR) {
-        fprintf(stderr, "echo_srv: Connection closed.\n");
-        break;
-      }
-      printf("Server >>> cli-B: %s", str_a);
-    }
+  /*
+  ** ¤u§@°Ï
+  **/
+    
+  // µ¥accept() return
+  printf("Server: waiting for client-A...\n");
+  if((cli_sd_a = accept(serv_sd, (LPSOCKADDR)&cli_a, &cli_len_a)) == SOCKET_ERROR) {
+    fprintf(stderr, "\necho_srv: accept() error!!!\n");
     closesocket(cli_sd_a);
+  }else {
+  	printf("Server: client-A is online.\n");
+    printf("Server: waiting for client-B...\n");
+    if((cli_sd_b = accept(serv_sd, (LPSOCKADDR)&cli_b, &cli_len_b)) == SOCKET_ERROR) {
+    fprintf(stderr, "\necho_srv: accept() error!!!\n");
     closesocket(cli_sd_b);
+    }else {
+    	printf("Server: client-B is online.\n");
+    // accept() OK!
+      while(1) {
+      // ¥ı±µ¦¬
+        if((n = recv(cli_sd_a, str_a, MAXLINE, 0))==0) {
+          fprintf(stderr, "\necho_srv: Connection closed.\n");
+          break;
+        }else if (n == SOCKET_ERROR) {
+          fprintf(stderr, "\necho_srv: recv() error!!!\n");
+          break;
+        }
+      // ¦pªG¦³¦¬¨ì¡A­×¥¿strµ²§À¡A¸É¤@­ÓNULL
+        str_a[n-1] = '\0';
+      // show str
+        printf("Server <<< cli-A: %s\n", str_a);
+        /*
+        if((m = recv(cli_sd_b, str_b, MAXLINE, 0))==0) {
+          fprintf(stderr, "\necho_srv: Connection closed.\n");
+          break;
+        }else if (m == SOCKET_ERROR) {
+          fprintf(stderr, "\necho_srv: recv() error!!!\n");
+          break;
+        }             
+        str_b[m] = '\0';
+        printf("Server <<< cli-B: %s\n", str_b);
+        */
+        /************************************/
+        
+        // TO DO HERE IN str
+        
+        /************************************/
+        // ¶Ç°e¥X¥h
+        if(send(cli_sd_a, str_a, strlen(str_a), 0) == SOCKET_ERROR) {
+            fprintf(stderr, "\necho_srv: Connection closed.\n");
+            break;
+        }
+        
+        if(send(cli_sd_b, str_a, strlen(str_a), 0) == SOCKET_ERROR) {
+          fprintf(stderr, "\necho_srv: Connection closed.\n");
+          break;
+        }
+        printf("Server >>> cli-A: %s\n", str_a);
+        printf("Server >>> cli-B: %s\n", str_a);
+      }
+    }
   }
+  closesocket(cli_sd_a);
+  closesocket(cli_sd_b);
   closesocket(serv_sd);
   WSACleanup();
 }
