@@ -75,32 +75,47 @@ void main() {
     fprintf(stderr, "\necho_cli: Can't connect to echo server.\n");
     exit(1);
   }
-
   while(1) {
-    printf("INPUT >> ");
-    while( fgets(str, MAXLINE, stdin) != NULL) {
-      //=======================================
-      // TO DO:
-      if(strcmp(str, "over\n\0")==0) {
-        break;
-      }
-      //=======================================
-      if(send(sd, str, strlen(str), 0) == SOCKET_ERROR) {
-        fprintf(stderr, "\necho_cli: send() error!!!\n");
-        break;
-      }
-      printf("<<< client: %s", str);
-      if((n = recv(sd, str,MAXLINE,0)) == 0) {
-        fprintf(stderr, "\necho_cli: Connection closed.\n");
-        break;
-      }else if(n == SOCKET_ERROR) {
-        fprintf(stderr, "\necho_cli: recv() error!!!\n");
-        break;
-      }else {
-        str[n-1] = '\0';
-        printf(">>> client: %s\n", str);
-      }
+    if((n = recv(sd, str,MAXLINE,0)) == 0) {
+      fprintf(stderr, "\necho_cli: Connection closed.\n");
       break;
+    }else if(n == SOCKET_ERROR) {
+      fprintf(stderr, "\necho_cli: recv() error!!!\n");
+      break;
+    }else {
+      str[n] = '\0';
+      printf(">>> client: %s\n", str);
+    }
+    while(1) {
+      printf("INPUT >> ");
+      while( fgets(str, MAXLINE, stdin) != NULL) {
+        //=======================================
+        // TO DO:
+
+        //=======================================
+        //µo°e
+        if(send(sd, str, strlen(str), 0) == SOCKET_ERROR) {
+          fprintf(stderr, "\necho_cli: send() error!!!\n");
+          break;
+        }
+        printf("<<< client: %s", str);
+        //±µ¦¬
+        if((n = recv(sd, str,MAXLINE,0)) == 0) {
+          fprintf(stderr, "\necho_cli: Connection closed.\n");
+          break;
+        }else if(n == SOCKET_ERROR) {
+          fprintf(stderr, "\necho_cli: recv() error!!!\n");
+          break;
+        }else {
+          str[n] = '\0';
+          printf(">>> client: %s\n", str);
+        }
+        break;
+      }
+      if(strcmp(str, "over")==0) {
+        printf("$ ");
+        break;
+      }
     }
   }
   closesocket(sd);

@@ -60,9 +60,8 @@ void main() {
     fprintf(stderr, "\necho_cli: Can't connect to echo server.\n");
     exit(1);
   }
-  printf("Client: OK!\n");
   while(1) {
-    if((n=recv(sd, str,MAXLINE,0)) == 0) {
+    if((n = recv(sd, str,MAXLINE,0)) == 0) {
       fprintf(stderr, "\necho_cli: Connection closed.\n");
       break;
     }else if(n == SOCKET_ERROR) {
@@ -70,8 +69,20 @@ void main() {
       break;
     }else {
       str[n] = '\0';
+      printf(">>> client: %s\n", str);
     }
-    printf(">>> client: %s\n", str);
+    while(1) {
+      if((n=recv(sd, str,MAXLINE,0)) == 0) {
+        fprintf(stderr, "\necho_cli: Connection closed.\n");
+        break;
+      }else if(n == SOCKET_ERROR) {
+        fprintf(stderr, "\necho_cli: recv() error!!!\n");
+        break;
+      }else {
+        str[n] = '\0';
+      }
+      printf(">>> client: %s\n", str);
+    }
   }
   closesocket(sd);
   WSACleanup();
