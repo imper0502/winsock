@@ -103,7 +103,7 @@ void main() {
             break;
           }
           // 如果有收到，修正str結尾，補一個NULL
-          if(n>1) str_a[n-1] = '\0';
+          if(n>0) str_a[n-1] = '\0';
           // show str
           printf("Server <<< cli-A: %s\n\n", str_a);
           /************************************/
@@ -126,7 +126,6 @@ void main() {
           // 判斷是否跳出
           //============================
           if(strcmp(str_a, "over")==0){
-            break;
           }
         }
         closesocket(cli_sd_b);

@@ -116,13 +116,13 @@ void main() {
           break;
         }
         if(strcmp(str, "over")==0) {
-          printf("$ ");
+          printf("$\n");
           break;
         }
         strcpy(str, "Hello!");
       }
     }
-    closesocket(sd);
   }
+  closesocket(sd);
   WSACleanup();
 }
