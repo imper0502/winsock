@@ -15,7 +15,7 @@ void main() {
   **/ 
   WSADATA wsadata;
   SOCKET serv_sd, cli_sd_a, cli_sd_b; 
-  struct sockaddr_in serv, cli_a, cli_b;
+	struct sockaddr_in serv, cli_a, cli_b;
   int cli_len_a, cli_len_b, n, m;
   char str_a[MAXLINE], str_b[MAXLINE]; 
   
@@ -85,7 +85,7 @@ void main() {
         closesocket(cli_sd_b);
       }else {
         printf("Server: client-B is online.\n");
-        strcpy( str_b, "Hello!");
+        strcpy( str_b, "Hey!");
         if(send(cli_sd_b, str_b, strlen(str_b), 0) == SOCKET_ERROR) {
           fprintf(stderr, "\necho_srv: Connection closed.\n");
           break;
@@ -107,11 +107,11 @@ void main() {
           else str_a[1] = '\0';
           // show str
           printf("Server <<< cli-A: %s\n\n", str_a);
-          /************************************/
+          //===================================
             
           // TO DO:
             
-          /************************************/
+          //===================================
           // 傳送出去
           if(send(cli_sd_a, str_a, strlen(str_a), 0) == SOCKET_ERROR) {
             fprintf(stderr, "\necho_srv: Connection closed.\n");
@@ -123,18 +123,39 @@ void main() {
             printf("Server >>> cli-A: %s\n", str_a);
             printf("Server >>> cli-B: %s\n", str_a);
           }
-          //============================
+					//===========================================
           // 判斷是否跳出
-          //============================
           if(strcmp(str_a, "over")==0){
+          	
+          }  
+          //===========================================
+        }//while 2-1 end
+        
+        while(1) {
+        	if(strcmp(str_a, "over")==0){
+          	
           }
-        }
-        closesocket(cli_sd_b);
+				}//while 2-2 end
+        //===================================
+            
+        // TO DO:
+            
+        //===================================
       }
-      closesocket(cli_sd_a);
+      //===================================
+            
+      // TO DO:
+            
+      //===================================
     }
-  }
-  
+    //===================================
+            
+    // TO DO:
+            
+    //===================================
+  }//while 1 end
+  closesocket(cli_sd_a);
+	closesocket(cli_sd_b);
   closesocket(serv_sd);
   WSACleanup();
-}
+}//main end

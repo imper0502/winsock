@@ -84,18 +84,21 @@ void main() {
         break;
       }else {
         str[n] = '\0';
-        printf(">>> client: %s\n", str);
+        printf("$ %s\n", str);
       }
       //=======================//
       //¼Ò¦¡§PÂ_
       //=======================//
-      while(strcmp( str, "Hello!")==0) {
+      if(strcmp(str, "Hello!")==0) {
+          strcpy(str, "SENDMODE");
+      }
+			if(strcmp(str, "Hey!")==0) {
+          strcpy(str, "RECVMODE");
+      }
+        
+      while(strcmp( str, "SENDMODE")==0) {
         printf("INPUT >> ");
         if( fgets(str, MAXLINE, stdin) != NULL) {// while
-          //=======================================
-          // TO DO:
-
-          //=======================================
           //µo°e
           if(send(sd, str, strlen(str), 0) == SOCKET_ERROR) {
             fprintf(stderr, "\necho_cli: send() error!!!\n");
@@ -114,15 +117,32 @@ void main() {
             printf(">>> client: %s\n", str);
           }
           //break;
-        }
+        }//if(){} === while(){ ...break;}
+        //===========================
+        //
         if(strcmp(str, "over")==0) {
-          printf("$\n");
           break;
         }
-        strcpy(str, "Hello!");
-      }
-    }
-  }
+        //===========================
+      }//while 3-1 end
+      
+			while(strcmp( str, "RECVMODE")==0) {
+				if((n = recv(sd, str,MAXLINE,0)) == 0) {
+          fprintf(stderr, "\necho_cli: Connection closed.\n");
+          break;
+        }else if(n == SOCKET_ERROR) {
+          fprintf(stderr, "\necho_cli: recv() error!!!\n");
+          break;
+        }else {
+          str[n] = '\0';
+          printf(">>> client: %s\n", str);
+        }
+				if(strcmp(str, "over")==0) {
+          break;
+        }
+      }//while 3-2 end
+    }//while 2 end
+  }//while 1 end
   closesocket(sd);
   WSACleanup();
 }
