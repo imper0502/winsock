@@ -1,8 +1,6 @@
-/**** 
-** 
+/********** 
 ** server
-**
-****/
+***********/
 
 #include <stdio.h> 
 #include <string.h>
@@ -10,52 +8,38 @@
 #define MAXLINE 1024
 
 void main() {
-  /*
-  ** 宣告
-  **/ 
+  // 宣告 
   WSADATA wsadata;
   SOCKET serv_sd, cli_sd_a, cli_sd_b; 
 	struct sockaddr_in serv, cli_a, cli_b;
   int cli_len_a, cli_len_b, n, m;
   char str_a[MAXLINE], str_b[MAXLINE]; 
   
-  /*
-  ** 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
-  **/
+  // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
   if(WSAStartup(0x101, (LPWSADATA)&wsadata) != 0) {
     fprintf(stderr, "\necho_srv: Can't use WinSock DLL.\n");
     exit(1);
   }
   
-  /*
-  ** 開啟 TCP socket
-  **/
+  // 開啟 TCP socket
   if((serv_sd = socket(AF_INET, SOCK_STREAM, 0)) == SOCKET_ERROR) {
     fprintf(stderr, "\necho_srv: Can't open TCP socket.\n");
     exit(1);
   }
   
-  /*
-  ** 指定socket 的 IP & port
-  **/
+  // 指定socket 的 IP & port
   serv.sin_family = AF_INET;
   serv.sin_addr.s_addr = 0;
   serv.sin_port = htons(IPPORT_ECHO);
   
-  /*
-  ** 工作區
-  **/
-  
+  //======== 工作區 ==================================
   if(bind(serv_sd, (LPSOCKADDR)&serv, sizeof(serv)) < 0) {
     fprintf(stderr, "\necho_srv: Can't bind local address.\n");
     exit(1);
   }
   
-  /*
-  ** 呼叫 listen() 使 socket進入[監聽]狀態，並設定
-  ** 最大同時可接受的連結要求
-  **/
-  
+  // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
+  // 最大同時可接受的連結要求
   if( listen(serv_sd, 5) < 0) {
     fprintf(stderr, "\necho_srv: listen() error!!!\n");
     exit(1);

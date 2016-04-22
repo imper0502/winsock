@@ -1,8 +1,6 @@
-/****
-**
+/*************
 ** client-a
-**
-****/
+**************/
 
 #include <stdio.h>
 #include <string.h>
@@ -11,10 +9,7 @@
 #define MAXLINE 1024
 
 void main() {
-  /*
-  ** 宣告
-  **/
-
+  // 宣告
   WSADATA wsadata;
   SOCKET sd;
   struct sockaddr_in serv;
@@ -22,22 +17,16 @@ void main() {
   int n = 0;
   char str[MAXLINE], myIP[17];
 
-  /*
-  ** 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
-  **/
-
+  // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
   if(WSAStartup(0x101, (LPWSADATA)&wsadata) != 0) {
     fprintf(stderr, "\necho_cli: WSAStartup() fails!!!\n");
     exit(1);
   }
-
-  /*
-  ** 指定socket 的 IP & port
-  **/
-
+  // 指定socket 的 IP & port
   serv.sin_family = AF_INET;
   serv.sin_addr.s_addr = inet_addr("127.0.0.1");
   serv.sin_port = htons(IPPORT_ECHO);
+  
   /*
   printf("Echo server IP: ");
   fgets(myIP, MAXLINE, stdin);
@@ -57,18 +46,13 @@ void main() {
   }
   */
 
-  /*
-  ** 開啟 TCP socket
-  **/
-
+  // 開啟 TCP socket
   if((sd = socket(AF_INET, SOCK_STREAM, 0)) == SOCKET_ERROR) {
     fprintf(stderr, "\necho_cli: Can't open TCP socket.\n");
     exit(1);
   }
 
-  /**********************
-  ** 工作區
-  ***********************/
+  //================= 工作區 ======================
   while(1) {
     printf("Client: waiting for server...\n");
     if(connect(sd, (LPSOCKADDR)&serv, sizeof(serv))== SOCKET_ERROR) {
@@ -86,9 +70,7 @@ void main() {
         str[n] = '\0';
         printf("$ %s\n", str);
       }
-      //=======================//
       //模式判斷
-      //=======================//
       if(strcmp(str, "Hello!")==0) {
           strcpy(str, "SENDMODE");
       }
@@ -118,12 +100,10 @@ void main() {
           }
           //break;
         }//if(){} === while(){ ...break;}
-        //===========================
-        //
+        //======== 字串處理2 ==============    
         if(strcmp(str, "over")==0) {
           break;
         }
-        //===========================
       }//while 3-1 end
       
 			while(strcmp( str, "RECVMODE")==0) {
