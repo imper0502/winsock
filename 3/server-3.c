@@ -1,11 +1,11 @@
 /********** 
 ** server
 ***********/
-
 #include <stdio.h> 
 #include <string.h>
 #include <winsock.h>
-#define MAXLINE 1024
+
+#define MAXLINE 1024 //字串緩衝區長度
 
 void main() {
   // 宣告 
