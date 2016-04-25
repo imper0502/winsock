@@ -4,7 +4,7 @@
 
 #define MAXLINE 1024    /* 字串緩衝區長度 */
 
-void main() {
+int main() {
   // 宣告
   WSADATA wsadata;
   SOCKET  serv_sd,
@@ -45,7 +45,7 @@ void main() {
   if(hp != 0) {
     printf("get hp error, code: %d\n\n", WSAGetLastError());
   }else {
-    printf("local host name: %s\n\n", str);
+    printf("local host name: %s\n", str);
     
   }
   
@@ -57,7 +57,7 @@ void main() {
   }else {
     printf("host name: %s\n", hp->h_name);
     printf("host nickname: %s\n", hp->h_aliases[0]);
-    printf("host IP: %s\n\n", inet_ntoa(*(LPIN_ADDR)(hp->h_addr)));
+    printf("host IP: %s\n", inet_ntoa(*(LPIN_ADDR)(hp->h_addr)));
   }
   
   // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
@@ -70,7 +70,7 @@ void main() {
   cli_len = sizeof(cli);
 
   while (1) {
-  printf("server: waiting for client\n");
+  printf("\nserver: waiting for client...\n");
 
   cli_sd = accept(serv_sd, (LPSOCKADDR) &cli, &cli_len);
 
@@ -80,18 +80,21 @@ void main() {
   
   n = recv(cli_sd, str, MAXLINE, 0);
   str[n]='\0';
-  printf("server: client->server: %s\n",str);     // 顯示從 client 傳來的字串
-
+	// 顯示從 client 傳來的字串
+  printf("server: client->server: %s\n",str);     
+  ///////////////////////////////////////////////TO DO >>>
   if(strcmp(str,"How are you?\0")==0)
     strcpy(str,"Fine, thank you!");
   else strcpy(str,"What?");
-
+  ///////////////////////////////////////////////<<< TO DO
   send(cli_sd, str, strlen(str), 0);
-  printf("server: server->client: %s\n",str);   // 顯示送去client 的字串
+	// 顯示送去client 的字串
+  printf("server: server->client: %s\n",str);   
   }
 
   //結束 WinSock DLL 的使用
   closesocket(serv_sd);
   closesocket(cli_sd);
   WSACleanup();
+  return;
 }
