@@ -7,7 +7,7 @@ void main() {
   char op = '@';
   char str[MAXLINE];
   while(1) {
-      printf(">> ");
+      printf(">>");
       fgets(str, MAXLINE, stdin);
       if(strcmp(str, "quit\n")==0) break;
     for( i=strlen(str); i>=0; i--) {
