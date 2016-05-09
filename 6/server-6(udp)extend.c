@@ -61,12 +61,13 @@ int main() {
     hp = (n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]));
 	if(hp==NULL) {
 		printf("get hp error, code: %d\n", WSAGetLastError());
-		printf("the number of online people: %d", onlineClientNum);
+		break;
 	}
 	str[n]='\0';
     printf("client(%s:%d)->server: %s\n", inet_ntoa(cli[i].sin_addr), ntohs(cli[i].sin_port), str);
 	onlineClientNum++;
   }
+  printf("the number of online people: %d", onlineClientNum);
   
   // if(strcmp(str,"How are you?\0")==0)
   //   strcpy(str,"Fine, thank you!");
