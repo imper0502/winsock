@@ -3,14 +3,14 @@
 #include <winsock.h>
 
 #define MAXLINE 1024    /* 字串緩衝區長度 */
-
+#define clientNum 2
 int main() {
   // 宣告=============================================
   WSADATA wsadata;
   SOCKET  serv_sd;
-  struct  sockaddr_in  serv, cli;
-  int     n, cli_len = sizeof(cli);
-  char    str[MAXLINE];
+  struct  sockaddr_in  serv, cli[clientNum];
+  int     n, cli_len[clientNum], i, j, k;
+  char    str[MAXLINE], tmp[20];
 
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用=======
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
@@ -37,42 +37,46 @@ int main() {
     printf("get hp error, code: %d\n", WSAGetLastError());
   }
   
-  // 查詢本機名稱=====================================
-  printf("What is local host's name?\n");
+  // 查詢本機資訊=====================================
+  printf("What is local host's name & IP?\n");
   hp = gethostname((LPSTR)str, MAXLINE);
   if(hp != 0) {
     printf("get hp error, code: %d\n\n", WSAGetLastError());
   }else {
     printf("local host name: %s\n", str);
-    
   }
-  
-  // 查詢本機 IP資訊====================================
-  printf("What is %s's IP?\n", str);
   hp = gethostbyname(str);
   if(hp == NULL){
     printf("get hp error, code: %d\n", WSAGetLastError());
   }else {
-    printf("host name: %s\n", hp->h_name);
-    printf("host nickname: %s\n", hp->h_aliases[0]);
+    // printf("host name: %s\n", hp->h_name);
+    // printf("host nickname: %s\n", hp->h_aliases[0]);
     printf("host IP: %s\n", inet_ntoa(*(LPIN_ADDR)(hp->h_addr)));
   }
 
   // 工作區================================================
-  while (1) {
+  for(i=0; i<clientNum; i++){
+	cli_len[i] = sizeof(cli[i]); 
     printf("server: waiting for client\n");
-
-    n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli, &cli_len);
+    n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]);
     str[n]='\0';
-    printf("server: client->server: %s\n",str);
-
-    if(strcmp(str,"How are you?\0")==0)
-    strcpy(str,"Fine, thank you!");
-    else strcpy(str,"What?");
-
-    sendto(serv_sd, str, strlen(str), 0, (LPSOCKADDR)&cli, cli_len);
-    // 顯示送去client 的字串
-    printf("server: server->client: %s\n",str);
+    printf("client(%s:%d)->server: %s\n", inet_ntoa(cli[i].sin_addr), ntohs(cli[i].sin_port), str);
+  }
+  // if(strcmp(str,"How are you?\0")==0)
+  //   strcpy(str,"Fine, thank you!");
+  // else 
+  // strcpy(str,"What?");
+  while(1) {
+	for(i=0; i<100; i++){
+      for(j=0; j<10; j++) {
+  	    memset(tmp, j+'0', sizeof(tmp));
+	    for(k=0; k<clientNum; k++){
+          sendto(serv_sd, tmp, strlen(str), 0, (LPSOCKADDR)&cli[k], cli_len[k]);
+          printf("server: send to client%d: %s\n", k, tmp);// 顯示送去client 的字串
+	    }
+  	    sleep(1);
+      }	
+	}  
   }
 
   //========================================================

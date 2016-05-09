@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
   WSADATA  wsadata;
   SOCKET  sd;
   struct sockaddr_in serv;
-  int n, serv_len = sizeof(serv);;
+  int n, serv_len = sizeof(serv);
   char  str[MAXLINE]="How are you?";
   
   // 呼叫 WSAStartup() 註冊 WinSock DLL 的使用
@@ -39,10 +39,11 @@ int main(int argc, char** argv) {
   printf("client: client->server: %s\n" ,str);
   
   // 由echo server接收
-  n=recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
-  str[n]='\0';
-  printf("client: server->client: %s\n",str);
-
+  while(1){
+    n=recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
+    str[n]='\0';
+    printf("server: %s\n",str);
+  }
   // 關閉 socket
   closesocket(sd);
   
