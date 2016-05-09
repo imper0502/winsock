@@ -3,7 +3,7 @@
 #include <winsock.h>
 
 #define MAXLINE 1024    /* 字串緩衝區長度 */
-#define clientNum 2
+#define clientNum 5
 int main() {
   // 宣告=============================================
   WSADATA wsadata;
@@ -56,16 +56,23 @@ int main() {
 
   // 工作區================================================
   for(i=0; i<clientNum; i++){
-	cli_len[i] = sizeof(cli[i]); 
+    cli_len[i] = sizeof(cli[i]); 
     printf("server: waiting for client%d...\n",i+1);
     hp = (n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]));
-	if(hp==NULL) {
-		printf("get hp error, code: %d\n", WSAGetLastError());
-		break;
-	}
-	str[n]='\0';
+    if(hp==NULL) {
+      printf("get hp error, code: %d\n", WSAGetLastError());
+      break;
+    }
+    str[n]='\0';
     printf("client(%s:%d)->server: %s\n", inet_ntoa(cli[i].sin_addr), ntohs(cli[i].sin_port), str);
-	onlineClientNum++;
+	  for(j=0; j<i; j++) {
+      // if(inet_ntoa(cli[i].sin_addr)==inet_ntoa(cli[j].sin_addr)) 
+      if(ntohs(cli[i].sin_port)==ntohs(cli[j].sin_port)){
+        onlineClientNum--;
+        i=j;
+      }
+    }
+    onlineClientNum++;
   }
   printf("the number of online people: %d\n", onlineClientNum);
   
@@ -78,7 +85,7 @@ int main() {
 	for(i=0; i<100; i++){
       for(j=0; j<10; j++) {
   	    memset(tmp, j+'0', sizeof(tmp));
-	    for(k=0; k<clientNum; k++){
+	    for(k=0; k<onlineClientNum; k++){
           sendto(serv_sd, tmp, strlen(str), 0, (LPSOCKADDR)&cli[k], cli_len[k]);
           printf("server: send to client%d: %s\n", k+1, tmp);// 顯示送去client 的字串
 	    }
