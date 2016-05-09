@@ -8,27 +8,28 @@ int main(int argc, char** argv) {
     WSADATA wsadata;
     SOCKET  sd;
     struct  sockaddr_in serv;
-    int     n, time = 0, serv_len = sizeof(serv);
+    int     i, n, serv_len = sizeof(serv);
     char    str[1024] = "How are you?";
-// ï¿½Iï¿½s WSAStartup() ï¿½ï¿½ï¿½U WinSock DLL ï¿½ï¿½ï¿½Ï¥ï¿½
+// ©I¥s WSAStartup() µù¥U WinSock DLL ªº¨Ï¥Î
     WSAStartup(0x101,(LPWSADATA) &wsadata);
     sd=socket(AF_INET, SOCK_DGRAM, 0);
-// ï¿½ï¿½ï¿½sï¿½uï¿½@ï¿½Ç³Æ¡Aï¿½]ï¿½tï¿½ï¿½ï¿½g sockaddr_in ï¿½ï¿½ï¿½c (serv) ï¿½C
-// ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½Gserver ï¿½ï¿½ IP ï¿½ï¿½ï¿½}ï¿½Aport number ï¿½ï¿½ï¿½ï¿½ï¿½C
+// ¬°³s½u§@·Ç³Æ¡A¥]§t¶ñ¼g sockaddr_in µ²ºc (serv) ¡C
+// ¤º®e¦³¡Gserver ªº IP ¦ì§}¡Aport number µ¥µ¥¡C
     serv.sin_family       = AF_INET;
     serv.sin_addr.s_addr  = inet_addr("127.0.0.1");
     serv.sin_port         = htons(5678);
-// ï¿½Ç°ehow are youï¿½ï¿½echo server
-    sendto(sd, str, strlen(str)+1, 0, (LPSOCKADDR)&serv, serv_len);
+// ¶Ç°ehow are you¦Üecho server
+for(i=0; i<MAXLINE; i++) {
+	sendto(sd, str, strlen(str)+1, 0, (LPSOCKADDR)&serv, serv_len);
     printf("client: client->server: %s\n" ,str);
-// ï¿½ï¿½echo serverï¿½ï¿½ï¿½ï¿½
-    while((n = recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len)) <= 0) time++;
-    // n=recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
+// ¥Ñecho server±µ¦¬
+    n=recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
     str[n]='\0';
     printf("client: server->client: %s\n",str);
-// ï¿½ï¿½ï¿½ï¿½TCP socket
+}
+// Ãö³¬TCP socket
     closesocket(sd);
-// ï¿½ï¿½ï¿½ï¿½ WinSock DLL ï¿½ï¿½ï¿½Ï¥ï¿½
+// µ²§ô WinSock DLL ªº¨Ï¥Î
     WSACleanup();
     return 0;
 }

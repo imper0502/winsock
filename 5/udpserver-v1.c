@@ -38,6 +38,6 @@ void main() {
     }
 //結束 WinSock DLL 的使用
     closesocket(serv_sd);
-    closesocket(cli_sd);
+
     WSACleanup();
 }
