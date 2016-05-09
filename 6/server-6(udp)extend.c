@@ -10,7 +10,7 @@ int main() {
   SOCKET  serv_sd;
   struct  sockaddr_in  serv, cli[clientNum];
   int     n, cli_len[clientNum], onlineClientNum = 0, i, j, k;
-  char    str[MAXLINE], tmp[20];
+  char    str[MAXLINE], tmp[30] = "Are you the last?(y/n)";
 
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用=======
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
@@ -56,24 +56,36 @@ int main() {
 
   // 工作區================================================
   for(i=0; i<clientNum; i++){
+    // 等待註冊
     cli_len[i] = sizeof(cli[i]); 
     printf("server: waiting for client%d...\n",i+1);
-    hp = (n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]));
-    if(hp==NULL) {
-      printf("get hp error, code: %d\n", WSAGetLastError());
-      break;
-    }
+    n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]);
     str[n]='\0';
     printf("client(%s:%d)->server: %s\n", inet_ntoa(cli[i].sin_addr), ntohs(cli[i].sin_port), str);
-	  for(j=0; j<i; j++) {
+    // 檢查client是否重複    
+    for(j=0; j<i; j++) {
       // if(inet_ntoa(cli[i].sin_addr)==inet_ntoa(cli[j].sin_addr)) 
       if(ntohs(cli[i].sin_port)==ntohs(cli[j].sin_port)){
-        onlineClientNum--;
         i=j;
       }
     }
-    onlineClientNum++;
+    // 詢問是不是最後一個人
+    if(i>0) {
+      onlineClientNum=i+1;
+      sendto(serv_sd, tmp, strlen(tmp), 0, (LPSOCKADDR)&cli[i], cli_len[i]);
+      printf("server ask client%d: %s\n", i+1, tmp);
+      memset(str, '\0', sizeof(str));
+      hp = (n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]));
+      if(hp!=NULL){      
+        str[n] = '\0';
+        printf("client%d recive: %s\n", i+1, str);
+        if(strcmp(str,"y\n\0")==0) break;
+      }
+    }else {
+      onlineClientNum = 1;
+    }
   }
+  
   printf("the number of online people: %d\n", onlineClientNum);
   
   // if(strcmp(str,"How are you?\0")==0)
@@ -85,10 +97,10 @@ int main() {
 	for(i=0; i<100; i++){
       for(j=0; j<10; j++) {
   	    memset(tmp, j+'0', sizeof(tmp));
-	    for(k=0; k<onlineClientNum; k++){
-          sendto(serv_sd, tmp, strlen(str), 0, (LPSOCKADDR)&cli[k], cli_len[k]);
+	      for(k=0; k<onlineClientNum; k++){
+          sendto(serv_sd, tmp, strlen(tmp), 0, (LPSOCKADDR)&cli[k], cli_len[k]);
           printf("server: send to client%d: %s\n", k+1, tmp);// 顯示送去client 的字串
-	    }
+	      }
   	    sleep(1);
       }	
 	}  

@@ -9,9 +9,8 @@ int main(int argc, char** argv) {
   WSADATA  wsadata;
   SOCKET  sd;
   struct sockaddr_in serv;
-  int n, serv_len = sizeof(serv);
-  char  str[MAXLINE]="How are you?",
-        str2[MAXLINE]="HAHAHA~~~XD";
+  int n, serv_len = sizeof(serv), i;
+  char  str[MAXLINE]="How are you?", tmp[MAXLINE];
 
   // 呼叫 WSAStartup() 註冊 WinSock DLL 的使用
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
@@ -35,17 +34,32 @@ int main(int argc, char** argv) {
 
   // 工作區========================================
 
-  // 傳送how are you至echo server
-  sendto(sd, str, strlen(str)+1, 0, (LPSOCKADDR)&serv, serv_len);
-  printf("client: client->server: %s\n" ,str);
-  sendto(sd, str2, strlen(str2)+1, 0, (LPSOCKADDR)&serv, serv_len);
-  printf("client: client->server: %s\n" ,str2);
+  // 傳送how are you至echo server 註冊
+  for(i=0; i<2; i++) {
+    
+    sendto(sd, str, strlen(str)+1, 0, (LPSOCKADDR)&serv, serv_len);
+    printf("client: client->server: %s\n" ,str);
+    
+    n=recvfrom(sd, tmp, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
+    str[n]='\0';
+    
+    if(strcmp(tmp,"Are you the last?(y/n)")==0) {
+      printf("server: %s", tmp);
+      fgets(tmp, MAXLINE, stdin);
+      sendto(sd, tmp, strlen(tmp)+1, 0, (LPSOCKADDR)&serv, serv_len);
+    }
+  }
+
   
   // 由echo server接收
   while(1){
     n=recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
     str[n]='\0';
     printf("server: %s\n",str);
+    if(strcmp(str,"Are you the last?(y/n)\n")==0) {
+      fgets(str, MAXLINE, stdin);
+      sendto(sd, str, strlen(str)+1, 0, (LPSOCKADDR)&serv, serv_len);
+    }
   }
   // 關閉 socket
   closesocket(sd);
