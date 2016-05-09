@@ -3,13 +3,13 @@
 #include <winsock.h>
 
 #define MAXLINE 1024    /* 字串緩衝區長度 */
-#define clientNum 2
+#define clientNum 5
 int main() {
   // 宣告=============================================
   WSADATA wsadata;
   SOCKET  serv_sd;
   struct  sockaddr_in  serv, cli[clientNum];
-  int     n, cli_len[clientNum], i, j, k;
+  int     n, cli_len[clientNum], onlineClientNum = 0, i, j, k;
   char    str[MAXLINE], tmp[20];
 
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用=======
@@ -57,22 +57,29 @@ int main() {
   // 工作區================================================
   for(i=0; i<clientNum; i++){
 	cli_len[i] = sizeof(cli[i]); 
-    printf("server: waiting for client\n");
-    n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]);
-    str[n]='\0';
+    printf("server: waiting for client%d...\n",i+1);
+    hp = (n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]));
+	if(hp==NULL) {
+		printf("get hp error, code: %d\n", WSAGetLastError());
+		printf("the number of online people: %d", onlineClientNum);
+	}
+	str[n]='\0';
     printf("client(%s:%d)->server: %s\n", inet_ntoa(cli[i].sin_addr), ntohs(cli[i].sin_port), str);
+	onlineClientNum++;
   }
+  
   // if(strcmp(str,"How are you?\0")==0)
   //   strcpy(str,"Fine, thank you!");
   // else 
   // strcpy(str,"What?");
+
   while(1) {
 	for(i=0; i<100; i++){
       for(j=0; j<10; j++) {
   	    memset(tmp, j+'0', sizeof(tmp));
 	    for(k=0; k<clientNum; k++){
           sendto(serv_sd, tmp, strlen(str), 0, (LPSOCKADDR)&cli[k], cli_len[k]);
-          printf("server: send to client%d: %s\n", k, tmp);// 顯示送去client 的字串
+          printf("server: send to client%d: %s\n", k+1, tmp);// 顯示送去client 的字串
 	    }
   	    sleep(1);
       }	
@@ -84,5 +91,5 @@ int main() {
   
   //結束 WinSock DLL 的使用=================================
   WSACleanup();
-  return;
+  return 0;
 }
