@@ -33,33 +33,29 @@ int main(int argc, char** argv) {
   serv.sin_port         = htons(5678);
 
   // 工作區========================================
-
+////////////////////////////////////////////////////////////////////// for extend B
   // 傳送how are you至echo server 註冊
   for(i=0; i<2; i++) {
-    
+
     sendto(sd, str, strlen(str)+1, 0, (LPSOCKADDR)&serv, serv_len);
     printf("client: client->server: %s\n" ,str);
-    
+
     n=recvfrom(sd, tmp, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
     str[n]='\0';
-    
+
     if(strcmp(tmp,"Are you the last?(y/n)")==0) {
       printf("server: %s", tmp);
       fgets(tmp, MAXLINE, stdin);
       sendto(sd, tmp, strlen(tmp)+1, 0, (LPSOCKADDR)&serv, serv_len);
     }
   }
+/////////////////////////////////////////////////////////////////////////
 
-  
   // 由echo server接收
   while(1){
     n=recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
     str[n]='\0';
     printf("server: %s\n",str);
-    if(strcmp(str,"Are you the last?(y/n)\n")==0) {
-      fgets(str, MAXLINE, stdin);
-      sendto(sd, str, strlen(str)+1, 0, (LPSOCKADDR)&serv, serv_len);
-    }
   }
   // 關閉 socket
   closesocket(sd);
