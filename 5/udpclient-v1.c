@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     n=recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
     str[n]='\0';
     printf("client: server->client: %s\n",str);
-// 關閉TCP socket
+// 關閉 socket
     closesocket(sd);
 // 結束 WinSock DLL 的使用
     WSACleanup();
