@@ -3,7 +3,7 @@
 #include <winsock.h>
 
 #define MAXLINE 1024    /* 字串緩衝區長度 */
-#define clientNum 5
+#define clientNum 2
 int main() {
   // 宣告=============================================
   WSADATA wsadata;
@@ -67,7 +67,7 @@ int main() {
     printf("client(%s:%d)->server: %s\n", inet_ntoa(cli[i].sin_addr), ntohs(cli[i].sin_port), str);
 	onlineClientNum++;
   }
-  printf("the number of online people: %d", onlineClientNum);
+  printf("the number of online people: %d\n", onlineClientNum);
   
   // if(strcmp(str,"How are you?\0")==0)
   //   strcpy(str,"Fine, thank you!");
