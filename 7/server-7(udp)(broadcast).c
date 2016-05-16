@@ -58,15 +58,34 @@ int main() {
       port = (u_short)(i) + port*10;    
     }
     cli[i].sin_port = htons(port);
-    printf("port:%i is OK!\n", ntohs(cli[i].sin_port));
+    printf("Channel_%i(port:%i) is OK!\n", i, ntohs(cli[i].sin_port));
+  }
+  cli_len[0] = sizeof(cli[0]);
+  cli[0].sin_family = AF_INET;
+  cli[0].sin_addr.s_addr = inet_addr("255.255.255.255");
+  cli[0].sin_port = htons(5554);
+  printf("YOU CAN SET PORT. (1111~9999) >>");
+  fgets(str, MAXLINE, stdin);
+  str[strlen(str)-1]='\0'; 
+  if(strlen(str) == 0) {
+    printf("Use default.\n");
+  }else {
+    port = (u_short)atoi(str);
+    for(i=1; i<clientNum; i++) {
+      if(port==ntohs(cli[i].sin_port)) {
+        printf("The port is used!\n");
+        return 0;
+      }
+    }
+    cli[0].sin_port = htons(port);
   }
   
   // ¤u§@°Ï================================================
   while(1) {
     memset(tmp, i%10+'0', sizeof(tmp));
-    for(j=1; j<clientNum; j++) {
+    for(j=0; j<clientNum; j++) {
       sendto(serv_sd, tmp, 2+j, 0, (LPSOCKADDR)&cli[j], cli_len[j]);
-      sleep(2/j);
+      sleep((j+10)/10);
     }
     i++;
   }

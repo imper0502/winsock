@@ -28,18 +28,26 @@ int main(int argc, char** argv) {
 
   cli.sin_family       = AF_INET;
   cli.sin_addr.s_addr  = 0;
-  cli.sin_port         = htons(5555);
+  cli.sin_port         = htons(5554);
   
   unsigned short port = 0;
-  printf("YOU CAN SET YOUR PORT. (1111~9999, default is 5555.) >>");
+  printf("YOU CAN SET YOUR CHANNEL. (1~9, default: select a port.) >>");
   fgets(str, MAXLINE, stdin);
   str[strlen(str)-1]='\0'; 
   if(strlen(str) == 0) {
-    printf("Use default.\n");
+    printf("Use default.\nYOU CAN CHANGE PORT. >>");
+    fgets(str, MAXLINE, stdin);
+    str[strlen(str)-1]='\0'; 
+    if(strlen(str) == 0) {
+      printf("Use default: 5554");
+    }else {
+      port = (u_short)atoi(str); 
+      cli.sin_port = htons(port);
+    }
   }else {
     port = 0;
     for(i=0; i<4; i++) {
-      port = (u_short)atoi(str);    
+      port = (u_short)atoi(str)+10*port;    
     }
     cli.sin_port = htons(port);
   }
