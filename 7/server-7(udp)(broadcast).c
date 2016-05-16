@@ -10,7 +10,7 @@ int main() {
   SOCKET  serv_sd;
   struct  sockaddr_in  serv, cli[clientNum];
   int     n, cli_len[clientNum], i, j, k;
-  char    str[MAXLINE], tmp[20];
+  char    str[MAXLINE], tmp[15];
 
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用=======
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
@@ -29,9 +29,15 @@ int main() {
   setsockopt(serv_sd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
   
   //指定 socket 的 IP 位址和 port number==============
-  // serv.sin_family      = AF_INET;
-  // serv.sin_addr.s_addr = 0;
-  // serv.sin_port        = htons(5679); // 指定IPPORT_ECHO 為 echo port
+  serv.sin_family      = AF_INET;
+  serv.sin_addr.s_addr = 0;
+  serv.sin_port        = htons(5679); // 指定IPPORT_ECHO 為 echo port
+  
+  cli_len[i] = sizeof(cli[i]); 
+  printf("Server will broadcast.\n");
+  cli[0].sin_family = AF_INET;
+  cli[0].sin_addr.s_addr = inet_addr("10.3.200.127");
+  cli[0].sin_port = htons(5679);
 
   //bind==============================================
   hp = bind(serv_sd, (LPSOCKADDR) &serv, sizeof(serv));
@@ -58,22 +64,9 @@ int main() {
   }
 
   // 工作區================================================
-  
-   cli_len[i] = sizeof(cli[i]); 
-   printf("Server will broadcast.\n");
-   cli[0].sin_family = AF_INET;
-   cli[0].sin_addr.s_addr = inet_addr("255.255.255.255");
-   cli[0].sin_port = htons(5679);
-   
-   
-
-  // if(strcmp(str,"How are you?\0")==0)
-  //   strcpy(str,"Fine, thank you!");
-  // else 
-  // strcpy(str,"What?");
   while(1) {
   	memset(tmp, i%10+'0', sizeof(tmp));
-    sendto(serv_sd, tmp, strlen(str), 0, (LPSOCKADDR)&cli[0], cli_len[0]);
+    sendto(serv_sd, tmp, strlen(tmp), 0, (LPSOCKADDR)&cli[0], cli_len[0]);
     printf("Server broadcast: %s\n", tmp);// 顯示送去client 的字串
   	sleep(1);
 	i++;
