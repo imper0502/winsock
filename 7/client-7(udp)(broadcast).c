@@ -26,15 +26,9 @@ int main(int argc, char** argv) {
     printf("get hp error, code: %d\n", WSAGetLastError());
   }
 
-  // 為連線作準備，包含填寫 sockaddr_in 結構 (serv) 。
-  // 內容有：server 的 IP 位址，port number 等等。
-  //serv.sin_family       = AF_INET;
-  //serv.sin_addr.s_addr  = inet_addr("10.3.200.77");
-  //serv.sin_port         = htons(5679);
-  
   cli.sin_family       = AF_INET;
-  cli.sin_addr.s_addr  = inet_addr("10.3.200.77");
-  cli.sin_port         = htons(5679);
+  cli.sin_addr.s_addr  = 0;
+  cli.sin_port         = htons(1234);
   
   hp = bind(sd, (LPSOCKADDR) &cli, sizeof(cli));
   if(hp < 0) printf("Bind error!\n");

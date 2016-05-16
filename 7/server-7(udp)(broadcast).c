@@ -29,23 +29,13 @@ int main() {
   setsockopt(serv_sd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
   
   //指定 socket 的 IP 位址和 port number==============
-  serv.sin_family      = AF_INET;
-  serv.sin_addr.s_addr = 0;
-  serv.sin_port        = htons(5679); // 指定IPPORT_ECHO 為 echo port
   
   cli_len[i] = sizeof(cli[i]); 
   printf("Server will broadcast.\n");
   cli[0].sin_family = AF_INET;
   cli[0].sin_addr.s_addr = inet_addr("10.3.200.127");
-  cli[0].sin_port = htons(5679);
+  cli[0].sin_port = htons(1234);
 
-  //bind==============================================
-  hp = bind(serv_sd, (LPSOCKADDR) &serv, sizeof(serv));
-  if(hp < 0) {
-	printf("Bind error!\n");
-    printf("get hp error, code: %d\n", WSAGetLastError());
-  }
-  
   // 查詢本機資訊=====================================
   printf("What is local host's name & IP?\n");
   hp = gethostname((LPSTR)str, MAXLINE);
