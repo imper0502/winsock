@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
   while(1){
     n = recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
     str[n]='\0';
-    printf("Server(from %s:%i): %s\n", inet_ntoa(serv.sin_addr), ntohs(serv.sin_port), str);
+    printf("Messenge of Group(%s:%i) form Server(%s:%i): %s\n", inet_ntoa(multicastRequest.imr_multiaddr), ntohs(multicastRequest.imr_interface.s_addr), inet_ntoa(serv.sin_addr), ntohs(serv.sin_port), str);
   }
   // Ãö³¬ socket
   closesocket(sd);
