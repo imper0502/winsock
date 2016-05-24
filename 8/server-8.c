@@ -3,14 +3,14 @@
 #include <winsock.h>
 
 #define MAXLINE 1024
-#define clientNum 2
+#define clientNum 3
 int main() {
   // 宣告與初始化========================================
   WSADATA wsadata;
   SOCKET  serv_sd;
   struct  sockaddr_in  serv, cli[clientNum];
   int     n, cli_len[clientNum], i, j, k;
-  char    str[MAXLINE], tmp[15];
+  char    str[MAXLINE], tmp[2][15];
 
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
@@ -57,14 +57,18 @@ int main() {
   }
   cli[0].sin_addr.s_addr = inet_addr("224.1.1.10");
   cli[1].sin_addr.s_addr = inet_addr("224.1.1.20");
-   
-  // 工作區================================================
+  cli[2].sin_addr.s_addr = inet_addr("224.1.1.30");
+
+	// 工作區================================================
+	strcpy(str, "\n群組1: 頻道介紹\n群組2: 數字\n群組3: 字母\n");
   while(1) {
-    memset(tmp, i%10+'0', sizeof(tmp));
-    for(j=0; j<clientNum; j++) {
-      sendto(serv_sd, tmp, strlen(tmp)-j*3, 0, (LPSOCKADDR)&cli[j], cli_len[j]);
-      sleep(1);
+    memset(tmp[0], i%10+'0', 15);
+    memset(tmp[1], i%26+'A', 15);
+    sendto(serv_sd, str, strlen(str), 0, (LPSOCKADDR)&cli[0], cli_len[0]);
+		for(j=1; j<clientNum; j++) {
+      sendto(serv_sd, tmp[j-1], 15, 0, (LPSOCKADDR)&cli[j], cli_len[j]);
     }
+    sleep(2);
     i++;
   }
 
