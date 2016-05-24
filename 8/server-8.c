@@ -49,31 +49,12 @@ int main() {
   }
 
   // 指定 socket 的 IP 位址和 port number
-  // 因為要廣播，所以特別設定client IP。
-  unsigned short port = 0;
   printf("Server will multicast.\n");
 
   cli_len[0] = sizeof(cli[0]);
   cli[0].sin_family = AF_INET;
   cli[0].sin_addr.s_addr = inet_addr("224.1.1.10");
-  cli[0].sin_port = htons(55549);
-  
-  // printf("YOU CAN SET PORT. (1111~99999) >>");
-  // fgets(str, MAXLINE, stdin);
-  // str[strlen(str)-1]='\0'; 
-  // if(strlen(str) == 0) {
-  //   printf("Use default.\n");
-  // }else {
-  //   port = (u_short)atoi(str);
-  //   for(i=1; i<clientNum; i++) {
-  //     if(port==ntohs(cli[i].sin_port)) {
-  //       printf("The port is used!\n");
-  //       return 0;
-  //     }
-  //   }
-  //   cli[0].sin_port = htons(port);
-  // }
-
+  cli[0].sin_port = htons(55549);  
   
   // 工作區================================================
   while(1) {
