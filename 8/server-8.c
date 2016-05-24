@@ -3,7 +3,7 @@
 #include <winsock.h>
 
 #define MAXLINE 1024
-#define clientNum 1
+#define clientNum 2
 int main() {
   // 宣告與初始化========================================
   WSADATA wsadata;
@@ -32,13 +32,13 @@ int main() {
   if(hp != 0) {
     printf("get hp error, code: %d\n\n", WSAGetLastError());
   }else {
-    printf("local host name: %s\n", str);
-  }
-  hp = gethostbyname(str);
-  if(hp == NULL){
-    printf("get hp error, code: %d\n", WSAGetLastError());
-  }else {
-    printf("host IP: %s\n", inet_ntoa(*(LPIN_ADDR)(hp->h_addr)));
+    hp = gethostbyname(str);
+    if(hp == NULL){
+      printf("get hp error, code: %d\n", WSAGetLastError());
+    }else {
+      printf("host name: %s\n", hp->h_name);
+      printf("host IP: %s\n", inet_ntoa(*(LPIN_ADDR)(hp->h_addr)));
+    }
   }
 
   // 設定群播功能=====================================
@@ -50,17 +50,21 @@ int main() {
 
   // 指定 socket 的 IP 位址和 port number
   printf("Server will multicast.\n");
-
-  cli_len[0] = sizeof(cli[0]);
-  cli[0].sin_family = AF_INET;
+  for(i=0; i<clientNum; i++) {
+    cli_len[i] = sizeof(cli[i]);
+    cli[i].sin_family = AF_INET;
+    cli[i].sin_port = htons(55549);
+  }
   cli[0].sin_addr.s_addr = inet_addr("224.1.1.10");
-  cli[0].sin_port = htons(55549);  
-  
+  cli[1].sin_addr.s_addr = inet_addr("224.1.1.20");
+   
   // 工作區================================================
   while(1) {
     memset(tmp, i%10+'0', sizeof(tmp));
-    sendto(serv_sd, tmp, strlen(tmp), 0, (LPSOCKADDR)&cli[0], cli_len[0]);
-    sleep(1);
+    for(j=0; j<clientNum; j++) {
+      sendto(serv_sd, tmp, strlen(tmp)-j*3, 0, (LPSOCKADDR)&cli[j], cli_len[j]);
+      sleep(1);
+    }
     i++;
   }
 
