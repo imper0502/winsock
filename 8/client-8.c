@@ -52,9 +52,22 @@ int main(int argc, char** argv) {
   }
   // 工作區========================================
   while(1){
+  	// 使用者按下鍵盤
+		if (_kbhit()) {
+			// 取得輸入的字元
+			int ch = _getch();
+			switch (ch) {
+			case 'C':
+				// 清理螢幕
+				system("cls");
+				// 再度顯示幫助
+				printf("群組: %s\n", inet_ntoa(multicastRequest.imr_multiaddr));
+				break;
+			}
+		}
     n = recvfrom(sd, str, MAXLINE, 0, (LPSOCKADDR)&serv, &serv_len);
     str[n]='\0';
-    printf("Message form Server[%s:%i]: %s\n", inet_ntoa(serv.sin_addr), ntohs(serv.sin_port), str);
+    printf("Message form Server[%s:%d]: %s\n", inet_ntoa(serv.sin_addr), ntohs(serv.sin_port), str);
   }
   // 關閉 socket
   closesocket(sd);
