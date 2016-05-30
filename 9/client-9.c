@@ -34,8 +34,12 @@ int main(int argc, char** argv) {
   //由echo server接收
   n=recv(sd, str, MAXLINE, 0); 
   str[n]='\0';
-  printf("client: server->client: %s\n",str);
-  
+  printf("client: server->client: %s", str);
+	for(;;){
+	  n=recv(sd, str, MAXLINE, 0); 
+    str[n]='\0';
+    printf("%s", str);
+  }
   //關閉TCP socket
   closesocket(sd);
   

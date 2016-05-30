@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
   // 內容有：server 的 IP 位址，port number 等等。
   serv.sin_family       = AF_INET;
   serv.sin_addr.s_addr  = inet_addr("127.0.0.1");
-  serv.sin_port         = htons(5678);
+  serv.sin_port         = htons(5554);
   
   // 工作區========================================
   
