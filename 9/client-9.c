@@ -28,17 +28,20 @@ int main(int argc, char** argv) {
   connect(sd, (LPSOCKADDR) &serv, sizeof(serv)); 
   
   //傳送how are you至echo server
-  send(sd, str, strlen(str)+1, 0); 
+  send(sd, str, strlen(str), 0); 
   printf("client: client->server: %s\n" ,str);
   
   //由echo server接收
   n=recv(sd, str, MAXLINE, 0); 
   str[n]='\0';
   printf("client: server->client: %s", str);
-	for(;;){
-	  n=recv(sd, str, MAXLINE, 0); 
+  send(sd, str, strlen(str), 0); 
+  
+  for(;;){
+	n=recv(sd, str, MAXLINE, 0); 
     str[n]='\0';
     printf("%s", str);
+    send(sd, str, strlen(str), 0); 
   }
   //關閉TCP socket
   closesocket(sd);

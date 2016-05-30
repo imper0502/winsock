@@ -1,11 +1,24 @@
+// server V9 UDP
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <winsock.h>
 
 #define MAXLINE 1024
-#define clientNum 10
+
+void *ThreadMain(void *arg); 
+
+struct ThreadArgs {
+    SOCKET _clntSock;
+};
+
 int main() {
-  // 宣告與初始化========================================
+  // 宣告:執行緒部分
+  DWORD  threadID;                 /* Thread ID from CreateThread() */
+  struct ThreadArgs *threadArgs;   /* Pointer to argument structure for thread */
+  threadArgs = (struct ThreadArgs *)malloc(sizeof(struct ThreadArgs));
+
+  // 宣告與初始化=======================================
   WSADATA wsadata;
   SOCKET  serv_sd;
   struct  sockaddr_in  serv, cli[clientNum];
