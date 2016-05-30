@@ -103,7 +103,10 @@ void *ThreadMain(void *threadArgs) {
     free(threadArgs);
 	char buf[MAXLINE];
 	int n;
-
+	
+    n = recv(clntSock, buf, MAXLINE, 0);
+	if(n<0) printf("recv failed.\n");
+	
 	while(n>0) {
 		//>>>>>>>>>>>>>>>>TO DO >>>
 		
