@@ -44,9 +44,9 @@ int main(int argc, char *argv[]) {
   
   //指定 socket 的 IP 位址和 port number===============
   memset(&servAddr, 0, sizeof(servAddr));
-  serv.sin_family      = AF_INET;
-  serv.sin_addr.s_addr = 0;
-  serv.sin_port        = htons(IPPORT_ECHO); // 指定IPPORT_ECHO 為 echo port
+  servAddr.sin_family      = AF_INET;
+  servAddr.sin_addr.s_addr = 0;
+  servAddr.sin_port        = htons(IPPORT_ECHO); // 指定IPPORT_ECHO 為 echo port
 
   //bind===============================================
   hp = bind(serv_sd, (LPSOCKADDR) &servAddr, sizeof(servAddr));
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "\necho_srv: listen() error!!!\n");
 	}
 	threadArgs = (struct ThreadArgs *)malloc(sizeof(struct ThreadArgs));
-	threadArgs->_clntSock = clntSock;
+	threadArgs->_clntSock = cli_sd;
     hp = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) ThreadMain, threadArgs, 0, (LPDWORD)&threadID);
 	if(hp==0) {
 		printf("thead create failed.\n");
@@ -111,8 +111,7 @@ void *ThreadMain(void *threadArgs) {
 		//>>>>>>>>>>>>>>>>TO DO >>>
 		
 		//<<<<<<<<<<<<<<<<DO END <<
-		hp = send(clntSock, str, strlen(str), 0) != strlen(buf);
-		if(hp) printf("send faild.\n");
+		if(send(clntSock, buf, strlen(buf), 0) != strlen(buf)) printf("send faild.\n");
 		n = recv(clntSock, buf, MAXLINE, 0);
 	    if(n<0) printf("recv failed.\n");
 	}
