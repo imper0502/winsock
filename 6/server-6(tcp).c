@@ -78,11 +78,11 @@ int main() {
 	str[n]='\0';
 		// 顯示從 client 傳來的字串
 	printf("server: client->server: %s\n",str);     
-	///////////////////////////////////////////////TO DO >>>
+	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TO DO>>>
 	if(strcmp(str,"How are you?\0")==0)
 		strcpy(str,"Fine, thank you!");
 	else strcpy(str,"What?");
-	///////////////////////////////////////////////<<< TO DO
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<TO DO<<<
 	send(cli_sd, str, strlen(str), 0);
 		// 顯示送去client 的字串
 	printf("server: server->client: %s\n",str);   
