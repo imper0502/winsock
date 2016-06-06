@@ -1,18 +1,19 @@
 // =============================================================================
 // my server
-// §@ªÌ: §d¬R¦¨
+// ä½œè€…: å³æ˜±æˆ
+// æœ€ä½³çš„ç€è¦½æ•ˆæœï¼Œè«‹ç”¨Notepad++ é–‹å•Ÿã€‚
 // =============================================================================
 
-// ¸ü¤J¨ç¦¡®w===================================================================
+// è¼‰å…¥å‡½å¼åº«===================================================================
 #include <stdio.h>
 #include <string.h>
 #include <winsock.h>
-// ©w¸q¥¨¶°=====================================================================
+// å®šç¾©å·¨é›†=====================================================================
 #define CONNECTNUMBER                                                        128
-#define MAXLINE                                                             1024//¦r¦ê½w½Ä°Ïªø«×
-// ¥Dµ{¦¡=======================================================================
+#define MAXLINE                                                             1024//å­—ä¸²ç·©è¡å€é•·åº¦
+// ä¸»ç¨‹å¼=======================================================================
 int main() {
-  // «Å§i°Ï&ªì©l¤Æ°Ï============================================================
+  // å®£å‘Šå€&åˆå§‹åŒ–å€============================================================
   WSADATA                                                               wsadata;
   SOCKET                                  tcp_sd, udp_sd, cli_sd[CONNECTNUMBER];
   struct sockaddr_in                              server, client[CONNECTNUMBER];
@@ -20,65 +21,65 @@ int main() {
   char                                              str[CONNECTNUMBER][MAXLINE];
   int                                                                   i, j, k;
   int                                                                      m, n;// for recv() & recvfrom()
-  // ©I¥s WSAStrartup() µù¥U WinSock DLL ªº¨Ï¥Î
+  // å‘¼å« WSAStrartup() è¨»å†Š WinSock DLL çš„ä½¿ç”¨
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
   if(nResult!=0) {
     printf("WSA Initialization failed: %d\n", nResult);
     WSACleanup();
     return 0;
   }
-  // ¶}±Ò TCP socket
+  // é–‹å•Ÿ TCP socket
   LPHOSTENT hp = (tcp_sd = socket(AF_INET, SOCK_STREAM, 0));
   if(hp == SOCKET_ERROR) {
-	  printf("get hp error, code: %d\n", WSAGetLastError());
+    printf("get hp error, code: %d\n", WSAGetLastError());
     fprintf(stderr, "echo@server: Can't open TCP socket.\n");
     return 0;
   }
-  // ¶}±Ò UDP socket
+  // é–‹å•Ÿ UDP socket
   hp = (udp_sd = socket(AF_INET, SOCK_DGRAM, 0));
   if(hp == SOCKET_ERROR) {
-	  printf("get hp error, code: %d\n", WSAGetLastError());
-	  fprintf(stderr, "echo@server: Can't open UDP socket.\n");
-	  return 0;
+    printf("get hp error, code: %d\n", WSAGetLastError());
+    fprintf(stderr, "echo@server: Can't open UDP socket.\n");
+    return 0;
   }
-  // ³]©w¼s¼½¥\¯à
+  // è¨­å®šå»£æ’­åŠŸèƒ½
   char broadcast = 'a';
   setsockopt(udp_sd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
-  
-  // ³]©w¦ì§}µ²ºc===============================================================
-  // ³]©wserver IP & port
+
+  // è¨­å®šä½å€çµæ§‹===============================================================
+  // è¨­å®šserver IP & port
   server.sin_family = AF_INET;
   server.sin_addr.s_addr = 0;
   server.sin_port = htons(5554);                                                //"IPPORT_ECHO"
-  // ³]©wclient IP & port¡C
+  // è¨­å®šclient IP & portã€‚
   client[0].sin_family = AF_INET;
   client[0].sin_addr.s_addr = inet_addr("255.255.255.255");
   client[0].sin_port = htons(5555);
 
-  // ¤u§@°Ï ====================================================================
+  // å·¥ä½œå€ ====================================================================
   if(bind(tcp_sd, (LPSOCKADDR)&server, sizeof(server)) < 0) {
     fprintf(stderr, "echo@server: Can't bind local address.\n");
     return 0;
   }
-  // ©I¥s listen() ¨Ï socket¶i¤J[ºÊÅ¥]ª¬ºA¡A¨Ã³]©w
-  // ³Ì¤j¦P®É¥i±µ¨üªº³sµ²­n¨D
+  // å‘¼å« listen() ä½¿ socketé€²å…¥[ç›£è½]ç‹€æ…‹ï¼Œä¸¦è¨­å®š
+  // æœ€å¤§åŒæ™‚å¯æ¥å—çš„é€£çµè¦æ±‚
   if(listen(tcp_sd, CONNECTNUMBER) < 0) {
     fprintf(stderr, "echo@server: listen() error!!!\n");
     return 0;
   }
-  // ³]©wclientªø«×
+  // è¨­å®šclienté•·åº¦
   for(int i; i<CONNECTNUMBER; i++) {
     client_len[i] = sizeof(client[i]);
   }
- 
+
   // ===========================================================================
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
   // ===========================================================================
   closesocket(udp_sd);
   closesocket(tcp_sd);
