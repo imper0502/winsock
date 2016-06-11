@@ -17,13 +17,12 @@ int main() {
   WSADATA                                                               wsadata;
   SOCKET                                  tcp_sd, udp_sd, cli_sd[CONNECTNUMBER];
   struct sockaddr_in                              server, client[CONNECTNUMBER];
-  int                                                 client_len[CONNECTNUMBER];
+  int                                                    cli_len[CONNECTNUMBER];
   char                                              str[CONNECTNUMBER][MAXLINE];
   int                                                                   i, j, k;
-  int                                                                      m, n;// for recv() & recvfrom()
+  int                                                          n[CONNECTNUMBER];// for recv() & recvfrom()
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
-  int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
-  if(nResult!=0) {
+  if(WSAStartup(0x101, (LPWSADATA)&wsadata)!=0) {
     printf("WSA Initialization failed: %d\n", nResult);
     WSACleanup();
     return 0;
@@ -69,17 +68,16 @@ int main() {
   }
   // 設定client長度
   for(int i; i<CONNECTNUMBER; i++) {
-    client_len[i] = sizeof(client[i]);
+    cli_len[i] = sizeof(client[i]);
   }
-
   // ===========================================================================
-
-
-
-
-
-
-
+  // tcp 收
+  cli_sd[0] = accept(tcp_sd, (LPSOCKADDR) &client[0], &cli_len[0]);
+  n[0] = recv(cli_sd, str[0], MAXLINE, 0);
+  str[n[0]]='\0';   
+  // tcp 送
+  send(cli_sd[0], str[0], strlen(str[0]), 0);
+  
   // ===========================================================================
   closesocket(udp_sd);
   closesocket(tcp_sd);
