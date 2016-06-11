@@ -60,34 +60,30 @@ int main() {
     printf("get hp error, code: %d\n", WSAGetLastError());
     return 0;
   }
-  if(bind(udp_sd, (LPSOCKADDR)&server, sizeof(server)) < 0) {
-    printf("get hp error, code: %d\n", WSAGetLastError());
-    return 0;
-  }
-  // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
-  // 最大同時可接受的連結要求
-  if(listen(tcp_sd, CONNECTNUMBER) < 0) {
-    fprintf(stderr, "echo@server: listen() error!!!\n");
-    return 0;
-  }
   // 設定client長度
   for(int i; i<CONNECTNUMBER; i++) {
     cli_len[i] = sizeof(client[i]);
   }
-  // ===========================================================================
-  
-  cli_sd[0] = accept(tcp_sd, (LPSOCKADDR) &client[0], &cli_len[0]);
-  // tcp 收
-  n[0] = recv(cli_sd, str[0], MAXLINE, 0);
-  str[n[0]]='\0';   
-  // tcp 送
-  send(cli_sd[0], str[0], strlen(str[0]), 0);
-  // =========================================================================== 
-  // udp 收
-  n[0] = recvfrom(udp_sd, str[0], MAXLINE, 0, (LPSOCKADDR)&client[0], &cli_len[0]);
-  str[n[0]]='\0';
-  // udp 送
-  sendto(udp_sd, str[0], strlen(str[0]), 0, (LPSOCKADDR)&client[0], cli_len[0]);
+  while(1){ 
+    // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
+    // 最大同時可接受的連結要求
+    if(listen(tcp_sd, CONNECTNUMBER) < 0) {
+      fprintf(stderr, "echo@server: listen() error!!!\n");
+      return 0;
+    }
+    // =========================================================================
+    while(1){
+      cli_sd[0] = accept(tcp_sd, (LPSOCKADDR) &client[0], &cli_len[0]);
+      // tcp 收
+      n[0] = recv(cli_sd, str[0], MAXLINE, 0);
+      str[n[0]]='\0';   
+      // tcp 送
+      send(cli_sd[0], str[0], strlen(str[0]), 0);
+      // =======================================================================
+      // udp 送
+      sendto(udp_sd, str[0], strlen(str[0]), 0, (LPSOCKADDR)&client[0], cli_len[0]);
+    }
+  }
   // ===========================================================================
   closesocket(udp_sd);
   closesocket(tcp_sd);

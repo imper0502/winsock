@@ -56,7 +56,7 @@ int main() {
 
   // ¤u§@°Ï================================================
   for(i=0; i<clientNum; i++){
-	cli_len[i] = sizeof(cli[i]); 
+	  cli_len[i] = sizeof(cli[i]); 
     printf("server: waiting for client\n");
     n=recvfrom(serv_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli[i], &cli_len[i]);
     str[n]='\0';
