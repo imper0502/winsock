@@ -10,12 +10,21 @@
 #include <winsock.h>
 // 定義巨集=====================================================================
 #define MAXLINE                                                             1024//字串緩衝區長度
+// 定義字串=====================================================================
+char message_1[MAXLINE] = "";
+char message_2[MAXLINE] = "";
+char message_3[MAXLINE] = "";
+char message_4[MAXLINE] = "";
+char message_5[MAXLINE] = "";
+char message_6[MAXLINE] = "";
+char message_7[MAXLINE] = "";
+char message_8[MAXLINE] = "";
 // 主程式=======================================================================
 int main() {
   // 宣告區&初始化區============================================================
   WSADATA                                                               wsadata;
   SOCKET                                                         tcp_sd, udp_sd;
-  struct sockaddr_in                                         serv, cli, cli_buf;
+  struct sockaddr_in                                         serv, cli, cli_buf;// cli_buf is a buffer.
   int                                                      n, serv_len, cli_len;
   char                                              str[MAXLINE]="How are you?";
   
