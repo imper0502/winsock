@@ -12,14 +12,19 @@
 #define CONNECTNUMBER                                                        128
 #define MAXLINE                                                             1024//字串緩衝區長度
 // 定義字串=====================================================================
-char message_1[MAXLINE] = "";
-char message_2[MAXLINE] = "";
-char message_3[MAXLINE] = "";
-char message_4[MAXLINE] = "";
-char message_5[MAXLINE] = "";
-char message_6[MAXLINE] = "";
-char message_7[MAXLINE] = "";
-char message_8[MAXLINE] = "";
+char message_1[MAXLINE] = "投票程式伺服端。作者：吳昱成\n";
+char message_2[MAXLINE] = "請輸入總投票人數: ";
+char message_3[MAXLINE] = "請輸入議題: ";
+char message_4[MAXLINE] = "請輸入選項A: ";
+char message_5[MAXLINE] = "請輸入選項B: ";
+char message_6[MAXLINE] = "請輸入選項C: ";
+char message_7[MAXLINE] = "請輸入選項D: ";
+char message_8[MAXLINE] = "所有人都完成投票了。結果如下:\n";
+char message_9[MAXLINE] = "";
+char message_10[MAXLINE] = "";
+char message_11[MAXLINE] = "";
+char message_12[MAXLINE] = "";
+
 // 主程式=======================================================================
 int main() {
   // 宣告區&初始化區============================================================

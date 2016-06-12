@@ -11,12 +11,12 @@
 // 定義巨集=====================================================================
 #define MAXLINE                                                             1024//字串緩衝區長度
 // 定義字串=====================================================================
-char message_1[MAXLINE] = "";
-char message_2[MAXLINE] = "";
+char message_1[MAXLINE] = "歡迎使用投票程式\n正在連線伺服器中...\n";
+char message_2[MAXLINE] = "連線成功！/n";
 char message_3[MAXLINE] = "";
-char message_4[MAXLINE] = "";
+char message_4[MAXLINE] = "請按a, b, c, d 鍵，進行投票。\n";
 char message_5[MAXLINE] = "";
-char message_6[MAXLINE] = "";
+char message_6[MAXLINE] = "感謝你的投票！\n等待投票結果中...\n";
 char message_7[MAXLINE] = "";
 char message_8[MAXLINE] = "";
 // 主程式=======================================================================
