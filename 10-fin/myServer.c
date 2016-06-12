@@ -11,16 +11,24 @@
 // 定義巨集=====================================================================
 #define CONNECTNUMBER                                                        128
 #define MAXLINE                                                             1024//字串緩衝區長度
+// 定義字串=====================================================================
+char message_1[MAXLINE] = "";
+char message_2[MAXLINE] = "";
+char message_3[MAXLINE] = "";
+char message_4[MAXLINE] = "";
+char message_5[MAXLINE] = "";
+char message_6[MAXLINE] = "";
+char message_7[MAXLINE] = "";
+char message_8[MAXLINE] = "";
 // 主程式=======================================================================
 int main() {
   // 宣告區&初始化區============================================================
   WSADATA                                                               wsadata;
-  SOCKET                                                 tcp_sd, udp_sd, cli_sd;
-  struct sockaddr_in                                     serv, cli_tcp, cli_udp;
-  int                                                                   cli_len;
+  SOCKET                                                 tcp_sd, udp_sd, cli_sd;// cli_sd is for TCP.
+  struct sockaddr_in                                     serv, cli_tcp, cli_udp;// cli_tcp is a buffer.
+  int                                                      n, serv_len, cli_len;
   char                                                             str[MAXLINE];
-  int                                                                   i, j, k;
-  int                                                                         n;// for recv() & recvfrom()
+  
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
   if(nResult!=0){
@@ -51,7 +59,7 @@ int main() {
   serv.sin_family = AF_INET;
   serv.sin_addr.s_addr = 0;                                                     // 本機
   serv.sin_port = htons(5554);                                                  // "IPPORT_ECHO"
-  // cli_tcp 不需要設定
+  // cli_tcp 當buffer，所以不需要設定
   // 設定client IP & port to sockaddr_in client for UDP Socket
   cli_udp.sin_family = AF_INET;
   cli_udp.sin_addr.s_addr = inet_addr("255.255.255.255");                       // 廣播
@@ -59,7 +67,9 @@ int main() {
   
   // 工作區 ====================================================================
   // 連結 tcp_sd 到本機
-  if(bind(tcp_sd, (LPSOCKADDR)&serv, sizeof(serv)) < 0) {
+  serv_len = sizeof(serv);
+  hp = bind(tcp_sd, (LPSOCKADDR)&serv, serv_len);
+  if(hp < 0) {
     printf("get hp error, code: %d\n", WSAGetLastError());
     return 0;
   }
@@ -68,11 +78,11 @@ int main() {
     // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
     // 最大同時可接受的連結要求
     if(listen(tcp_sd, CONNECTNUMBER) < 0) {
-      fprintf(stderr, "echo@server: listen() error!!!\n");
+      fprintf(stderr, "server: listen() error!!!\n");
       return 0;
     }
     while(1){
-      // 設定client長度
+      // 設定tcp client長度
       cli_len = sizeof(cli_tcp);
       // 把listen 從 serv_sd 到的 tcp client accept 到 cli_sd >>> 建立通道
       cli_sd = accept(tcp_sd, (LPSOCKADDR)&cli_tcp, &cli_len);
@@ -82,9 +92,8 @@ int main() {
       // tcp 送
       send(cli_sd, str, strlen(str), 0);
       // UDP part ==============================================================
-      cli_len = sizeof(cli_udp);
       // udp 送
-      sendto(udp_sd, str, strlen(str), 0, (LPSOCKADDR)&cli_udp, cli_len);
+      sendto(udp_sd, str, strlen(str), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
     }
   }
   // ===========================================================================
