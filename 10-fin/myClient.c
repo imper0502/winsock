@@ -106,18 +106,15 @@ int main() {
 
   // 投票結束===================================================================
   cli_len = sizeof(cli_buf);
-  do{
+  while(strcmp(str, buf)==0){
+    sleep(1);
     n=recvfrom(udp_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli_buf, &cli_len);
     str[n]='\0';
-    if(n>0){
-      if(strcmp(str, buf)!=0){
-        printf("%s", msg_4);
-        printf("%s",str);
-        break;
-      }
-    }
-  }while(strcmp(str, buf)==0);
-
+  }
+  if(n>0){
+    printf("%s", msg_4);
+    printf("%s",str);
+  }
   system("pause");
   //關閉 socket
   closesocket(tcp_sd);
