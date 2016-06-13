@@ -30,10 +30,10 @@ char msg_8[MAXLINE] = "開始投票。請等待投票完成...\n";
 char msg_9[MAXLINE] = "感謝你的投票。請等待投票結果。\n";
 char msg_10[MAXLINE] = "所有人都完成投票了。結果如下:\n";
 char msg_11[MAXLINE] = "票\n";
-char msg_12[MAXLINE] = "";
+char msg_bt[MAXLINE] = "";
 // 全域變數
 int                                                             peopleN, Num[5];
-
+char                                                                     voting;
 // 主程式=======================================================================
 int main() {
   // 宣告區&初始化區============================================================
@@ -47,7 +47,7 @@ int main() {
   int                                                      n, serv_len, cli_len;
   // otherwise
   char                                                          str[5][MAXLINE];
-  char                                                               ch, voting;
+  char                                                                       ch;
 
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
@@ -118,33 +118,28 @@ int main() {
   strcpy(msg_7, "(D) ");
   strcat(msg_7, str[4]);
 
-  strcpy(str[0], "網路投票開始。\n");
-  strcat(str[0], msg_3);
-  strcat(str[0], msg_4);
-  strcat(str[0], msg_5);
-  strcat(str[0], msg_6);
-  strcat(str[0], msg_7);
+  strcpy(msg_bt, "網路投票開始。\n");
+  strcat(msg_bt, msg_3);
+  strcat(msg_bt, msg_4);
+  strcat(msg_bt, msg_5);
+  strcat(msg_bt, msg_6);
+  strcat(msg_bt, msg_7);
 
   // 開始投票===================================================================
   voting = 1;
-  memset(Num, '0', 5);
+  memset(Num, 0, 5);
   while(1){
     // UDP part ==================================================================
     // udp 廣播
-    if(voting){
-      Num[0] = Num[1]+Num[2]+ Num[3]+Num[4];
-      if(peopleN == Num[0]){
-        voting = 0;
-        continue;
-      }
-      sendto(udp_sd, str[0], strlen(str[0]), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
-    }else if(!voting){
-
+    if(voting==1){
+      sendto(udp_sd, msg_bt, strlen(msg_bt), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
+    }
+    if(voting==0){
       sprintf(str[1], "%d", Num[1]);
       sprintf(str[2], "%d", Num[2]);
       sprintf(str[3], "%d", Num[3]);
       sprintf(str[4], "%d", Num[4]);
-
+    
       strcat(msg_10, "選項A ");
       strcat(msg_10, str[1]);
       strcat(msg_10, msg_11);
@@ -182,16 +177,17 @@ int main() {
       printf("get hp error, code: %d\n", WSAGetLastError());
       return 0;
     }
-
+    
+    u_long iMode = 1;
+    ioctlsocket(tcp_sd, FIONBIO, &iMode);
+    
     threadArgs = (struct ThreadArgs *)malloc(sizeof(struct ThreadArgs));
     threadArgs->_cli_sd = cli_sd;
     hp = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) ThreadMain, threadArgs, 0, (LPDWORD)&threadID);
     if(hp==0){
       printf("thead create failed.\n");
     }
-    printf("New thread %ld\n", threadID);
   }
-  system("pause");
   // ===========================================================================
   closesocket(udp_sd);
   closesocket(tcp_sd);
@@ -209,10 +205,11 @@ void *ThreadMain(void *threadArgs){
   //
   cli_sd = ((struct ThreadArgs *)threadArgs)->_cli_sd;
   free(threadArgs);
+  
   // tcp 收
   n = recv(cli_sd, &ch, 1, 0);
   if(n > 0){
-    printf("%c", ch);
+    printf("%d\t%c", cli_sd, ch);
     switch(ch){
       case 'a':
         Num[1]++;
@@ -227,9 +224,14 @@ void *ThreadMain(void *threadArgs){
         Num[4]++;
 	      break;
     }
+    printf("\t%d\t%d\t%d\t%d\n", Num[1], Num[2], Num[3], Num[4]);
   }
   // tcp 送
   send(cli_sd, msg_9, strlen(msg_9), 0);
+  Num[0] = Num[1]+Num[2]+Num[3]+Num[4];
+  if(peopleN == Num[0]){
+    voting = 0;
+  }
 
   closesocket(cli_sd);
   return (NULL);

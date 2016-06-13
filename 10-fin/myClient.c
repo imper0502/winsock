@@ -58,7 +58,6 @@ int main() {
 
   printf("%s", msg_1);
 
-
   // 投票開始===================================================================
   // UDP part ==================================================================
   // 連結 udp_sd 到本機
@@ -69,12 +68,14 @@ int main() {
     printf("Bind error!\n");
   }
   cli_len = sizeof(cli_buf);
-  n=recvfrom(udp_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli_buf, &cli_len);
-  if(n>0){
-    printf("%s", msg_2);
-    str[n]='\0';
-    strcpy(buf, str);
-    printf("%s\n",str);
+  while((n=recvfrom(udp_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli_buf, &cli_len))!=NULL){
+    if(n>0){
+      printf("%s", msg_2);
+      str[n]='\0';
+      strcpy(buf, str);
+      printf("%s\n",str);
+      break;
+    }
   }
   // TCP part ==================================================================
   // 連接tcp 至 server
