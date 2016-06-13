@@ -12,18 +12,18 @@
 #define CONNECTNUMBER                                                        128
 #define MAXLINE                                                             1024//字串緩衝區長度
 // 定義字串=====================================================================
-char message_1[MAXLINE] = "投票程式伺服端。作者：吳昱成\n";
-char message_2[MAXLINE] = "請輸入總投票人數: ";
-char message_3[MAXLINE] = "請輸入議題: ";
-char message_4[MAXLINE] = "請輸入選項A: ";
-char message_5[MAXLINE] = "請輸入選項B: ";
-char message_6[MAXLINE] = "請輸入選項C: ";
-char message_7[MAXLINE] = "請輸入選項D: ";
-char message_8[MAXLINE] = "所有人都完成投票了。結果如下:\n";
-char message_9[MAXLINE] = "";
-char message_10[MAXLINE] = "";
-char message_11[MAXLINE] = "";
-char message_12[MAXLINE] = "";
+char msg_1[MAXLINE] = "投票程式伺服端。作者：吳昱成\n";
+char msg_2[MAXLINE] = "請輸入總投票人數: ";
+char msg_3[MAXLINE] = "請輸入議題: ";
+char msg_4[MAXLINE] = "請輸入選項A: ";
+char msg_5[MAXLINE] = "請輸入選項B: ";
+char msg_6[MAXLINE] = "請輸入選項C: ";
+char msg_7[MAXLINE] = "請輸入選項D: ";
+char msg_8[MAXLINE] = "開始投票。請等待投票完成...";
+char msg_9[MAXLINE] = "所有人都完成投票了。結果如下:\n";
+char msg_10[MAXLINE] = "";
+char msg_11[MAXLINE] = "";
+char msg_12[MAXLINE] = "";
 
 // 主程式=======================================================================
 int main() {
@@ -32,7 +32,8 @@ int main() {
   SOCKET                                                 tcp_sd, udp_sd, cli_sd;// cli_sd is for TCP.
   struct sockaddr_in                                     serv, cli_tcp, cli_udp;// cli_tcp is a buffer.
   int                                                      n, serv_len, cli_len;
-  char                                                             str[MAXLINE];
+  int                                                                   peopleN;
+  char                                                          str[5][MAXLINE];
   
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
@@ -71,6 +72,42 @@ int main() {
   cli_udp.sin_port = htons(5555);                                               // 用另一個port
   
   // 工作區 ====================================================================
+  
+    // 顯示歡迎訊息
+  printf("%s", msg_1);
+  // 要求輸入
+  printf("%s", msg_2);
+  fscanf(stdin, "%d", &peopleN);
+  
+  printf("%s", msg_3);
+  fgets(str[0], MAXLINE, stdin);
+  fgets(str[0], MAXLINE, stdin);
+  
+  printf("%s", msg_4);
+  fgets(str[1], MAXLINE, stdin);
+  printf("%s", msg_5);
+  fgets(str[2], MAXLINE, stdin);
+  printf("%s", msg_6);
+  fgets(str[3], MAXLINE, stdin);
+  printf("%s", msg_7);
+  fgets(str[4], MAXLINE, stdin);
+  
+  // 字串處理
+  strcpy(msg_3, "議題: ");
+  strcat(msg_3, str[0]);  
+  strcpy(msg_4, "(A) ");
+  strcat(msg_4, str[1]);  
+  strcpy(msg_5, "(B) ");
+  strcat(msg_5, str[2]);  
+  strcpy(msg_6, "(C) ");
+  strcat(msg_6, str[3]);  
+  strcpy(msg_7, "(D) ");
+  strcat(msg_7, str[4]);  
+  
+  
+  
+  
+  
   // 連結 tcp_sd 到本機
   serv_len = sizeof(serv);
   hp = bind(tcp_sd, (LPSOCKADDR)&serv, serv_len);
@@ -88,17 +125,17 @@ int main() {
     }
     while(1){
       // 設定tcp client長度
-      cli_len = sizeof(cli_tcp);
+      // cli_len = sizeof(cli_tcp);
       // 把listen 從 serv_sd 到的 tcp client accept 到 cli_sd >>> 建立通道
-      cli_sd = accept(tcp_sd, (LPSOCKADDR)&cli_tcp, &cli_len);
+      // cli_sd = accept(tcp_sd, (LPSOCKADDR)&cli_tcp, &cli_len);
       // tcp 收
-      n = recv(cli_sd, str, MAXLINE, 0);
-      str[n]='\0';   
+      // n = recv(cli_sd, str, MAXLINE, 0);
+      // str[n]='\0';   
       // tcp 送
-      send(cli_sd, str, strlen(str), 0);
+      // send(cli_sd, str, strlen(str), 0);
       // UDP part ==============================================================
       // udp 送
-      sendto(udp_sd, str, strlen(str), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
+      // sendto(udp_sd, str, strlen(str), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
     }
   }
   // ===========================================================================
