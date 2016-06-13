@@ -116,57 +116,56 @@ int main() {
   
   // 開始投票===================================================================
   memset(Num, 0, 5);
-  // UDP part ==================================================================
-  // udp 廣播
-  sendto(udp_sd, str[0], strlen(str[0]), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
-
-  // TCP part ==================================================================
-  // 連結 tcp_sd 到本機
-  serv_len = sizeof(serv);
-  hp = bind(tcp_sd, (LPSOCKADDR)&serv, serv_len);
-  if(hp < 0) {
-    printf("get hp error, code: %d\n", WSAGetLastError());
-    return 0;
+  while(1){
+    // UDP part ==================================================================
+    // udp 廣播
+    sendto(udp_sd, str[0], strlen(str[0]), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
+    
+    // TCP part ==================================================================
+    // 連結 tcp_sd 到本機
+    serv_len = sizeof(serv);
+    hp = bind(tcp_sd, (LPSOCKADDR)&serv, serv_len);
+    if(hp < 0) {
+      printf("get hp error, code: %d\n", WSAGetLastError());
+      return 0;
+    }
+    // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
+    // 最大同時可接受的連結要求
+    if(listen(tcp_sd, 3) < 0) {
+      fprintf(stderr, "server: listen() error!!!\n");
+      return 0;
+    }
+    // 設定tcp client長度
+    cli_len = sizeof(cli_tcp);
+    // 把listen 從 serv_sd 到的 tcp client accept 到 cli_sd >>> 建立通道
+    cli_sd = accept(tcp_sd, (LPSOCKADDR)&cli_tcp, &cli_len);
+    if(cli_sd < 0) {
+      printf("get hp error, code: %d\n", WSAGetLastError());
+      return 0;
+    }
+    // tcp 收
+    n = recv(cli_sd, &ch, 1, 0);
+    if(n > 0){
+      printf("%c", ch);
+      switch(ch){
+        case 'a':
+          Num[1]++;
+	        break; 
+        case 'b':
+          Num[2]++;
+	        break;
+        case 'c':
+          Num[3]++;
+	        break;
+        case 'd':
+          Num[4]++;
+	        break;
+	    }  
+    }
+    // tcp 送
+    send(cli_sd, msg_9, strlen(msg_9), 0);
+    system("pause");
   }
-  // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
-  // 最大同時可接受的連結要求
-  if(listen(tcp_sd, 3) < 0) {
-    fprintf(stderr, "server: listen() error!!!\n");
-    return 0;
-  }
-  // 設定tcp client長度
-  cli_len = sizeof(cli_tcp);
-  // 把listen 從 serv_sd 到的 tcp client accept 到 cli_sd >>> 建立通道
-  cli_sd = accept(tcp_sd, (LPSOCKADDR)&cli_tcp, &cli_len);
-  if(cli_sd < 0) {
-    printf("get hp error, code: %d\n", WSAGetLastError());
-    return 0;
-  }
-  // tcp 收
-  memset(str[0], '\0', MAXLINE);
-  n = recv(cli_sd, &ch, 1, 0);
-  
-  if(n > 0){
-    printf("%c", ch);
-    switch(ch){
-      case 'a':
-        Num[1]++;
-	      break; 
-      case 'b':
-        Num[2]++;
-	      break;
-      case 'c':
-        Num[3]++;
-	      break;
-      case 'd':
-        Num[4]++;
-	      break;
-	  }  
-  }
-  // tcp 送
-  send(cli_sd, msg_9, strlen(msg_9), 0);
-  system("pause");
-
   // ===========================================================================
   closesocket(udp_sd);
   closesocket(tcp_sd);

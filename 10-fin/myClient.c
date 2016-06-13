@@ -57,19 +57,6 @@ int main() {
   cli.sin_addr.s_addr  = 0;
   cli.sin_port         = htons(5555);
   
-  // 連接tcp 至 server
-  serv_len = sizeof(serv);
-  hp = connect(tcp_sd, (LPSOCKADDR)&serv, serv_len); 
-  if(hp < 0) {
-    printf("get hp error, code: %d\n", WSAGetLastError());
-  }
-  // 連結 udp_sd 到本機
-  cli_len = sizeof(cli);
-  hp = bind(udp_sd, (LPSOCKADDR)&cli, cli_len);
-  if(hp < 0) {
-    printf("get hp error, code: %d\n", WSAGetLastError());
-    printf("Bind error!\n");
-  }
   // 工作區=====================================================================
   
   printf("%s", msg_1);
@@ -77,6 +64,13 @@ int main() {
   
   // 傳輸開始===================================================================
   // UDP part ==================================================================
+  // 連結 udp_sd 到本機
+  cli_len = sizeof(cli);
+  hp = bind(udp_sd, (LPSOCKADDR)&cli, cli_len);
+  if(hp < 0) {
+    printf("get hp error, code: %d\n", WSAGetLastError());
+    printf("Bind error!\n");
+  }
   cli_len = sizeof(cli_buf);
   n=recvfrom(udp_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli_buf, &cli_len);
   if(n>0){
@@ -85,37 +79,28 @@ int main() {
     printf("%s\n",str);
   }
   // TCP part ==================================================================
+  // 連接tcp 至 server
+  serv_len = sizeof(serv);
+  hp = connect(tcp_sd, (LPSOCKADDR)&serv, serv_len); 
+  if(hp < 0) {
+    printf("get hp error, code: %d\n", WSAGetLastError());
+  }
   printf("%s", msg_3);
   // 鍵盤控制
   while(1){
     if(_kbhit()){
 	  	// 取得輸入的字元
 	  	char ch = _getch();
-	  	switch(ch){
-        case 'a':
-          send(tcp_sd, &ch, 1, 0);
-          printf("%s", msg_4);          
-          break;
-        case 'b':
-          send(tcp_sd, &ch, 1, 0);
-          printf("%s", msg_4);  
-	  		  break;
-        case 'c':
-          send(tcp_sd, &ch, 1, 0);
-          printf("%s", msg_4);  
-	  		  break;
-        case 'd':
-          send(tcp_sd, &ch, 1, 0);
-          printf("%s", msg_4);  
-	  		  break;
-	  	}
+	  	strcpy(str, &ch);
       if(ch=='a'||ch=='b'||ch=='c'||ch=='d'){
+        send(tcp_sd, str, MAXLINE, 0);
+        printf("%s", msg_4);
         break;
       }
 	  }
   }    
   // TCP receive
-  memset(str, '\0', MAXLINE);
+  
   n = recv(tcp_sd, str, MAXLINE, 0); 
   str[n]='\0';
   if(n>0){
