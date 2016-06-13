@@ -20,10 +20,10 @@ char msg_5[MAXLINE] = "請輸入選項B: ";
 char msg_6[MAXLINE] = "請輸入選項C: ";
 char msg_7[MAXLINE] = "請輸入選項D: ";
 char msg_8[MAXLINE] = "開始投票。請等待投票完成...\n";
-char msg_9[MAXLINE] = "所有人都完成投票了。結果如下:\n";
+char msg_9[MAXLINE] = "感謝你的投票。請等待投票結果。\n";
 char msg_10[MAXLINE] = "";
 char msg_11[MAXLINE] = "";
-char msg_12[MAXLINE] = "";
+char msg_12[MAXLINE] = "所有人都完成投票了。結果如下:\n";
 // 全域變數
 int                                                             peopleN, Num[5];
 
@@ -35,6 +35,7 @@ int main() {
   struct sockaddr_in                                     serv, cli_tcp, cli_udp;// cli_tcp is a buffer.
   int                                                      n, serv_len, cli_len;
   char                                                          str[5][MAXLINE];
+  char                                                                       ch;
   
   // 呼叫 WSAStrartup() 註冊 WinSock DLL 的使用
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
@@ -106,18 +107,20 @@ int main() {
   strcpy(msg_7, "(D) ");
   strcat(msg_7, str[4]);  
 
-  // 開始投票===================================================================
-  // UDP part ==============================================================
-  // udp 廣播
   strcpy(str[0], "網路投票開始。\n");
   strcat(str[0], msg_3);  
   strcat(str[0], msg_4);  
   strcat(str[0], msg_5);  
   strcat(str[0], msg_6);  
   strcat(str[0], msg_7);  
+  
+  // 開始投票===================================================================
+  memset(Num, 0, 5);
+  // UDP part ==================================================================
+  // udp 廣播
   sendto(udp_sd, str[0], strlen(str[0]), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
-  
-  
+
+  // TCP part ==================================================================
   // 連結 tcp_sd 到本機
   serv_len = sizeof(serv);
   hp = bind(tcp_sd, (LPSOCKADDR)&serv, serv_len);
@@ -125,27 +128,44 @@ int main() {
     printf("get hp error, code: %d\n", WSAGetLastError());
     return 0;
   }
-  while(1){ 
-    // TCP part ================================================================
-    // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
-    // 最大同時可接受的連結要求
-    if(listen(tcp_sd, CONNECTNUMBER) < 0) {
-      fprintf(stderr, "server: listen() error!!!\n");
-      return 0;
-    }
-    while(1){
-      // 設定tcp client長度
-      // cli_len = sizeof(cli_tcp);
-      // 把listen 從 serv_sd 到的 tcp client accept 到 cli_sd >>> 建立通道
-      // cli_sd = accept(tcp_sd, (LPSOCKADDR)&cli_tcp, &cli_len);
-      // tcp 收
-      // n = recv(cli_sd, str, MAXLINE, 0);
-      // str[n]='\0';   
-      // tcp 送
-      // send(cli_sd, str, strlen(str), 0);
-    }
+  // 呼叫 listen() 使 socket進入[監聽]狀態，並設定
+  // 最大同時可接受的連結要求
+  if(listen(tcp_sd, 3) < 0) {
+    fprintf(stderr, "server: listen() error!!!\n");
+    return 0;
   }
-
+  // 設定tcp client長度
+  cli_len = sizeof(cli_tcp);
+  // 把listen 從 serv_sd 到的 tcp client accept 到 cli_sd >>> 建立通道
+  cli_sd = accept(tcp_sd, (LPSOCKADDR)&cli_tcp, &cli_len);
+  if(cli_sd < 0) {
+    printf("get hp error, code: %d\n", WSAGetLastError());
+    return 0;
+  }
+  // tcp 收
+  memset(str[0], '\0', MAXLINE);
+  n = recv(cli_sd, &ch, 1, 0);
+  
+  if(n > 0){
+    printf("%c", ch);
+    switch(ch){
+      case 'a':
+        Num[1]++;
+	      break; 
+      case 'b':
+        Num[2]++;
+	      break;
+      case 'c':
+        Num[3]++;
+	      break;
+      case 'd':
+        Num[4]++;
+	      break;
+	  }  
+  }
+  // tcp 送
+  send(cli_sd, msg_9, strlen(msg_9), 0);
+  system("pause");
 
   // ===========================================================================
   closesocket(udp_sd);

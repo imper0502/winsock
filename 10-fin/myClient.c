@@ -13,10 +13,10 @@
 // 定義字串=====================================================================
 char msg_1[MAXLINE] = "歡迎使用投票程式\n正在連線伺服器中...\n";
 char msg_2[MAXLINE] = "連線成功! \n";
-char msg_3[MAXLINE] = "";
-char msg_4[MAXLINE] = "請按a, b, c, d 鍵，進行投票。\n";
+char msg_3[MAXLINE] = "請按a, b, c, d 鍵，進行投票。\n";
+char msg_4[MAXLINE] = "感謝你的投票！\n等待投票結果中...\n";
 char msg_5[MAXLINE] = "";
-char msg_6[MAXLINE] = "感謝你的投票！\n等待投票結果中...\n";
+char msg_6[MAXLINE] = "";
 char msg_7[MAXLINE] = "";
 char msg_8[MAXLINE] = "";
 // 主程式=======================================================================
@@ -84,16 +84,44 @@ int main() {
     str[n]='\0';
     printf("%s\n",str);
   }
-  system("pause");
   // TCP part ==================================================================
-  //傳送how are you至echo server
-  // send(tcp_sd, str, strlen(str)+1, 0); 
-  // printf("client->server: %s\n" ,str);
-  //由echo server接收
-  // n=recv(tcp_sd, str, MAXLINE, 0); 
-  // str[n]='\0';
-  // printf("server->client: %s\n",str);
-  
+  printf("%s", msg_3);
+  // 鍵盤控制
+  while(1){
+    if(_kbhit()){
+	  	// 取得輸入的字元
+	  	char ch = _getch();
+	  	switch(ch){
+        case 'a':
+          send(tcp_sd, &ch, 1, 0);
+          printf("%s", msg_4);          
+          break;
+        case 'b':
+          send(tcp_sd, &ch, 1, 0);
+          printf("%s", msg_4);  
+	  		  break;
+        case 'c':
+          send(tcp_sd, &ch, 1, 0);
+          printf("%s", msg_4);  
+	  		  break;
+        case 'd':
+          send(tcp_sd, &ch, 1, 0);
+          printf("%s", msg_4);  
+	  		  break;
+	  	}
+      if(ch=='a'||ch=='b'||ch=='c'||ch=='d'){
+        break;
+      }
+	  }
+  }    
+  // TCP receive
+  memset(str, '\0', MAXLINE);
+  n = recv(tcp_sd, str, MAXLINE, 0); 
+  str[n]='\0';
+  if(n>0){
+    printf("%s", str);
+  }
+  system("pause");
   //關閉 socket
   closesocket(tcp_sd);
   closesocket(udp_sd);
