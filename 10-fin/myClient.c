@@ -11,14 +11,14 @@
 // 定義巨集=====================================================================
 #define MAXLINE                                                             1024//字串緩衝區長度
 // 定義字串=====================================================================
-char message_1[MAXLINE] = "歡迎使用投票程式\n正在連線伺服器中...\n";
-char message_2[MAXLINE] = "連線成功！/n";
-char message_3[MAXLINE] = "";
-char message_4[MAXLINE] = "請按a, b, c, d 鍵，進行投票。\n";
-char message_5[MAXLINE] = "";
-char message_6[MAXLINE] = "感謝你的投票！\n等待投票結果中...\n";
-char message_7[MAXLINE] = "";
-char message_8[MAXLINE] = "";
+char msg_1[MAXLINE] = "歡迎使用投票程式\n正在連線伺服器中...\n";
+char msg_2[MAXLINE] = "連線成功! \n";
+char msg_3[MAXLINE] = "";
+char msg_4[MAXLINE] = "請按a, b, c, d 鍵，進行投票。\n";
+char msg_5[MAXLINE] = "";
+char msg_6[MAXLINE] = "感謝你的投票！\n等待投票結果中...\n";
+char msg_7[MAXLINE] = "";
+char msg_8[MAXLINE] = "";
 // 主程式=======================================================================
 int main() {
   // 宣告區&初始化區============================================================
@@ -26,7 +26,7 @@ int main() {
   SOCKET                                                         tcp_sd, udp_sd;
   struct sockaddr_in                                         serv, cli, cli_buf;// cli_buf is a buffer.
   int                                                      n, serv_len, cli_len;
-  char                                              str[MAXLINE]="How are you?";
+  char                                                          str[MAXLINE]="";
   
    
   // 呼叫 WSAStartup() 註冊 WinSock DLL 的使用
@@ -70,22 +70,31 @@ int main() {
     printf("get hp error, code: %d\n", WSAGetLastError());
     printf("Bind error!\n");
   }
+  // 工作區=====================================================================
+  
+  printf("%s", msg_1);
+  
+  
   // 傳輸開始===================================================================
+  // UDP part ==================================================================
+  cli_len = sizeof(cli_buf);
+  n=recvfrom(udp_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli_buf, &cli_len);
+  if(n>0){
+    printf("%s", msg_2);
+    str[n]='\0';
+    printf("%s\n",str);
+  }
+  system("pause");
   // TCP part ==================================================================
   //傳送how are you至echo server
-  send(tcp_sd, str, strlen(str)+1, 0); 
-  printf("client->server: %s\n" ,str);
+  // send(tcp_sd, str, strlen(str)+1, 0); 
+  // printf("client->server: %s\n" ,str);
   //由echo server接收
-  n=recv(tcp_sd, str, MAXLINE, 0); 
-  str[n]='\0';
-  printf("server->client: %s\n",str);
+  // n=recv(tcp_sd, str, MAXLINE, 0); 
+  // str[n]='\0';
+  // printf("server->client: %s\n",str);
   
-  // UDP part ==================================================================
-  n=recvfrom(udp_sd, str, MAXLINE, 0, (LPSOCKADDR)&cli_buf, &sizeof(cli_buf));
-  str[n]='\0';
-  printf("server->client: %s\n",str);
-  
-  //關閉TCP socket
+  //關閉 socket
   closesocket(tcp_sd);
   closesocket(udp_sd);
   // 結束 WinSock DLL 的使用

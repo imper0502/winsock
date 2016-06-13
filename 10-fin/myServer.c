@@ -1,81 +1,82 @@
 // =============================================================================
 // my server
-// ä½œè€…: å³æ˜±æˆ
-// æœ€ä½³çš„ç€è¦½æ•ˆæœï¼Œè«‹ç”¨Notepad++ é–‹å•Ÿã€‚
+// §@ªÌ: §d¬R¦¨
+// ³Ì¨ÎªºÂsÄı®ÄªG¡A½Ğ¥ÎNotepad++ ¶}±Ò¡C
 // =============================================================================
 
-// è¼‰å…¥å‡½å¼åº«===================================================================
+// ¸ü¤J¨ç¦¡®w===================================================================
 #include <stdio.h>
 #include <string.h>
 #include <winsock.h>
-// å®šç¾©å·¨é›†=====================================================================
+// ©w¸q¥¨¶°=====================================================================
 #define CONNECTNUMBER                                                        128
-#define MAXLINE                                                             1024//å­—ä¸²ç·©è¡å€é•·åº¦
-// å®šç¾©å­—ä¸²=====================================================================
-char msg_1[MAXLINE] = "æŠ•ç¥¨ç¨‹å¼ä¼ºæœç«¯ã€‚ä½œè€…ï¼šå³æ˜±æˆ\n";
-char msg_2[MAXLINE] = "è«‹è¼¸å…¥ç¸½æŠ•ç¥¨äººæ•¸: ";
-char msg_3[MAXLINE] = "è«‹è¼¸å…¥è­°é¡Œ: ";
-char msg_4[MAXLINE] = "è«‹è¼¸å…¥é¸é …A: ";
-char msg_5[MAXLINE] = "è«‹è¼¸å…¥é¸é …B: ";
-char msg_6[MAXLINE] = "è«‹è¼¸å…¥é¸é …C: ";
-char msg_7[MAXLINE] = "è«‹è¼¸å…¥é¸é …D: ";
-char msg_8[MAXLINE] = "é–‹å§‹æŠ•ç¥¨ã€‚è«‹ç­‰å¾…æŠ•ç¥¨å®Œæˆ...";
-char msg_9[MAXLINE] = "æ‰€æœ‰äººéƒ½å®ŒæˆæŠ•ç¥¨äº†ã€‚çµæœå¦‚ä¸‹:\n";
+#define MAXLINE                                                             1024//¦r¦ê½w½Ä°Ïªø«×
+// ©w¸q¦r¦ê=====================================================================
+char msg_1[MAXLINE] = "§ë²¼µ{¦¡¦øªAºİ¡C§@ªÌ¡G§d¬R¦¨\n";
+char msg_2[MAXLINE] = "½Ğ¿é¤JÁ`§ë²¼¤H¼Æ: ";
+char msg_3[MAXLINE] = "½Ğ¿é¤JÄ³ÃD: ";
+char msg_4[MAXLINE] = "½Ğ¿é¤J¿ï¶µA: ";
+char msg_5[MAXLINE] = "½Ğ¿é¤J¿ï¶µB: ";
+char msg_6[MAXLINE] = "½Ğ¿é¤J¿ï¶µC: ";
+char msg_7[MAXLINE] = "½Ğ¿é¤J¿ï¶µD: ";
+char msg_8[MAXLINE] = "¶}©l§ë²¼¡C½Ğµ¥«İ§ë²¼§¹¦¨...\n";
+char msg_9[MAXLINE] = "©Ò¦³¤H³£§¹¦¨§ë²¼¤F¡Cµ²ªG¦p¤U:\n";
 char msg_10[MAXLINE] = "";
 char msg_11[MAXLINE] = "";
 char msg_12[MAXLINE] = "";
+// ¥ş°ìÅÜ¼Æ
+int                                                             peopleN, Num[5];
 
-// ä¸»ç¨‹å¼=======================================================================
+// ¥Dµ{¦¡=======================================================================
 int main() {
-  // å®£å‘Šå€&åˆå§‹åŒ–å€============================================================
+  // «Å§i°Ï&ªì©l¤Æ°Ï============================================================
   WSADATA                                                               wsadata;
   SOCKET                                                 tcp_sd, udp_sd, cli_sd;// cli_sd is for TCP.
   struct sockaddr_in                                     serv, cli_tcp, cli_udp;// cli_tcp is a buffer.
   int                                                      n, serv_len, cli_len;
-  int                                                                   peopleN;
   char                                                          str[5][MAXLINE];
   
-  // å‘¼å« WSAStrartup() è¨»å†Š WinSock DLL çš„ä½¿ç”¨
+  // ©I¥s WSAStrartup() µù¥U WinSock DLL ªº¨Ï¥Î
   int nResult = WSAStartup(0x101, (LPWSADATA)&wsadata);
   if(nResult!=0){
     printf("WSA Initialization failed: %d\n", nResult);
     WSACleanup();
     return 0;
   }
-  // é–‹å•Ÿ TCP socket
+  // ¶}±Ò TCP socket
   LPHOSTENT hp = (tcp_sd = socket(AF_INET, SOCK_STREAM, 0));
   if(hp == SOCKET_ERROR){
     printf("get hp error, code: %d\n", WSAGetLastError());
     fprintf(stderr, "Can't open TCP socket.\n");
     return 0;
   }
-  // é–‹å•Ÿ UDP socket
+  // ¶}±Ò UDP socket
   hp = (udp_sd = socket(AF_INET, SOCK_DGRAM, 0));
   if(hp == SOCKET_ERROR) {
     printf("get hp error, code: %d\n", WSAGetLastError());
     fprintf(stderr, "Can't open UDP socket.\n");
     return 0;
   }
-  // è¨­å®šå»£æ’­åŠŸèƒ½
+  // ³]©w¼s¼½¥\¯à
   char broadcast = 'a';
   setsockopt(udp_sd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
 
-  // è¨­å®šä½å€çµæ§‹===============================================================
-  // è¨­å®šserver IP & port to sockaddr_in server for TCP Socket
+  // ³]©w¦ì§}µ²ºc===============================================================
+  // ³]©wserver IP & port to sockaddr_in server for TCP Socket
   serv.sin_family = AF_INET;
-  serv.sin_addr.s_addr = 0;                                                     // æœ¬æ©Ÿ
+  serv.sin_addr.s_addr = 0;                                                     // ¥»¾÷
   serv.sin_port = htons(5554);                                                  // "IPPORT_ECHO"
-  // cli_tcp ç•¶bufferï¼Œæ‰€ä»¥ä¸éœ€è¦è¨­å®š
-  // è¨­å®šclient IP & port to sockaddr_in client for UDP Socket
+  // cli_tcp ·íbuffer¡A©Ò¥H¤£»İ­n³]©w
+  // ³]©wclient IP & port to sockaddr_in client for UDP Socket
   cli_udp.sin_family = AF_INET;
-  cli_udp.sin_addr.s_addr = inet_addr("255.255.255.255");                       // å»£æ’­
-  cli_udp.sin_port = htons(5555);                                               // ç”¨å¦ä¸€å€‹port
+  cli_udp.sin_addr.s_addr = inet_addr("255.255.255.255");                       // ¼s¼½
+  cli_udp.sin_port = htons(5555);                                               // ¥Î¥t¤@­Óport
   
-  // å·¥ä½œå€ ====================================================================
+  // ¤u§@°Ï ====================================================================
   
-    // é¡¯ç¤ºæ­¡è¿è¨Šæ¯
+    // Åã¥ÜÅwªï°T®§
   printf("%s", msg_1);
-  // è¦æ±‚è¼¸å…¥
+  // ­n¨D¿é¤J
   printf("%s", msg_2);
   fscanf(stdin, "%d", &peopleN);
   
@@ -91,9 +92,10 @@ int main() {
   fgets(str[3], MAXLINE, stdin);
   printf("%s", msg_7);
   fgets(str[4], MAXLINE, stdin);
+  printf("%s", msg_8); 
   
-  // å­—ä¸²è™•ç†
-  strcpy(msg_3, "è­°é¡Œ: ");
+  // ¦r¦ê³B²z
+  strcpy(msg_3, "Ä³ÃD: ");
   strcat(msg_3, str[0]);  
   strcpy(msg_4, "(A) ");
   strcat(msg_4, str[1]);  
@@ -103,12 +105,20 @@ int main() {
   strcat(msg_6, str[3]);  
   strcpy(msg_7, "(D) ");
   strcat(msg_7, str[4]);  
+
+  // ¶}©l§ë²¼===================================================================
+  // UDP part ==============================================================
+  // udp ¼s¼½
+  strcpy(str[0], "ºô¸ô§ë²¼¶}©l¡C\n");
+  strcat(str[0], msg_3);  
+  strcat(str[0], msg_4);  
+  strcat(str[0], msg_5);  
+  strcat(str[0], msg_6);  
+  strcat(str[0], msg_7);  
+  sendto(udp_sd, str[0], strlen(str[0]), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
   
   
-  
-  
-  
-  // é€£çµ tcp_sd åˆ°æœ¬æ©Ÿ
+  // ³sµ² tcp_sd ¨ì¥»¾÷
   serv_len = sizeof(serv);
   hp = bind(tcp_sd, (LPSOCKADDR)&serv, serv_len);
   if(hp < 0) {
@@ -117,27 +127,26 @@ int main() {
   }
   while(1){ 
     // TCP part ================================================================
-    // å‘¼å« listen() ä½¿ socketé€²å…¥[ç›£è½]ç‹€æ…‹ï¼Œä¸¦è¨­å®š
-    // æœ€å¤§åŒæ™‚å¯æ¥å—çš„é€£çµè¦æ±‚
+    // ©I¥s listen() ¨Ï socket¶i¤J[ºÊÅ¥]ª¬ºA¡A¨Ã³]©w
+    // ³Ì¤j¦P®É¥i±µ¨üªº³sµ²­n¨D
     if(listen(tcp_sd, CONNECTNUMBER) < 0) {
       fprintf(stderr, "server: listen() error!!!\n");
       return 0;
     }
     while(1){
-      // è¨­å®štcp clienté•·åº¦
+      // ³]©wtcp clientªø«×
       // cli_len = sizeof(cli_tcp);
-      // æŠŠlisten å¾ serv_sd åˆ°çš„ tcp client accept åˆ° cli_sd >>> å»ºç«‹é€šé“
+      // §âlisten ±q serv_sd ¨ìªº tcp client accept ¨ì cli_sd >>> «Ø¥ß³q¹D
       // cli_sd = accept(tcp_sd, (LPSOCKADDR)&cli_tcp, &cli_len);
-      // tcp æ”¶
+      // tcp ¦¬
       // n = recv(cli_sd, str, MAXLINE, 0);
       // str[n]='\0';   
-      // tcp é€
+      // tcp °e
       // send(cli_sd, str, strlen(str), 0);
-      // UDP part ==============================================================
-      // udp é€
-      // sendto(udp_sd, str, strlen(str), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
     }
   }
+
+
   // ===========================================================================
   closesocket(udp_sd);
   closesocket(tcp_sd);
