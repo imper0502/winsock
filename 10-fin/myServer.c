@@ -144,7 +144,7 @@ int main() {
       fprintf(stderr, "server: listen() error!!!\n");
       return 0;
     }
-    
+
     // 設定tcp client長度
     cli_len = sizeof(cli_tcp);
     // 把listen 從 serv_sd 到的 tcp client accept 到 cli_sd >>> 建立通道
@@ -156,7 +156,7 @@ int main() {
     // non-block mode
     u_long iMode = 1;
     ioctlsocket(tcp_sd, FIONBIO, &iMode);
-    
+
     threadArgs = (struct ThreadArgs *)malloc(sizeof(struct ThreadArgs));
     threadArgs->_cli_sd = cli_sd;
     hp = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) ThreadMain, threadArgs, 0, (LPDWORD)&threadID);
@@ -191,7 +191,7 @@ int main() {
   }
   int i=0;
   while(voting==0){
-    sleep(1);    
+    sleep(1);
     sendto(udp_sd, msg_10, strlen(msg_10), 0, (LPSOCKADDR)&cli_udp, sizeof(cli_udp));
     if((i++)==10) break;
   }
@@ -214,7 +214,7 @@ void *ThreadMain(void *threadArgs){
   //
   cli_sd = ((struct ThreadArgs *)threadArgs)->_cli_sd;
   free(threadArgs);
-  
+
   // tcp 收
   n = recv(cli_sd, &ch, 1, 0);
   if(n > 0){
@@ -222,16 +222,16 @@ void *ThreadMain(void *threadArgs){
     switch(ch){
       case 'a':
         Num[1]++;
-	      break;
+        break;
       case 'b':
         Num[2]++;
-	        break;
+          break;
       case 'c':
         Num[3]++;
-	      break;
+        break;
       case 'd':
         Num[4]++;
-	      break;
+        break;
     }
     printf("\t%d\t%d\t%d\t%d\n", Num[1], Num[2], Num[3], Num[4]);
   }
